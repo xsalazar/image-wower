@@ -9,6 +9,8 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    console.log("Sending request to remove.bg");
+
     // Request for background removal
     const removebgRes = await axios.post(
       "https://api.remove.bg/v1.0/removebg",
@@ -23,14 +25,20 @@ exports.handler = async (event, context) => {
       }
     );
 
+    console.log("Sending request to Giphy");
+
     // Get GIF by ID from Giphy API
     const gifId = "Ck80ojSw2VQWfwFfnY";
     const giphyRes = await axios.get(
       `https://api.giphy.com/v1/gifs/${gifId}?api_key=${process.env.GIPHY_API_KEY}`
     );
 
+    console.log("Downloading raw gif");
+
     // Download GIF
     const rawGif = await axios.get(giphyRes.data.data.images.original.url);
+
+    console.log("Combining");
 
     // Combine gif with result
     const output = await sharp(Buffer.from(rawGif.data, "base64"), {
