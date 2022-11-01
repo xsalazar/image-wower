@@ -36,7 +36,9 @@ exports.handler = async (event, context) => {
     console.log("Downloading raw gif");
 
     // Download GIF
-    const rawGif = await axios.get(giphyRes.data.data.images.original.url);
+    const rawGif = await axios.get(giphyRes.data.data.images.original.url, {
+      responseType: "arraybuffer",
+    });
 
     console.log("Combining");
 
