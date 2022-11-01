@@ -12,7 +12,7 @@ exports.handler = async (event, context) => {
 
   try {
     // Request for background removal
-    let res = await axios.post(
+    const removebgRes = await axios.post(
       "https://api.remove.bg/v1.0/removebg",
       {
         image_file_b64: event.body,
@@ -25,25 +25,29 @@ exports.handler = async (event, context) => {
       }
     );
 
-    console.log(`remove.bg response: ${JSON.stringify(res)}`);
-
-    // Save image locally
-    const fileLocation = `/tmp/${uuidv4()}.png`;
-    fs.writeFileSync(fileLocation, res.data);
+    console.log(`remove.bg response: ${JSON.stringify(removebgRes)}`);
 
     // Get GIF by ID from Giphy API
     const gifId = "Ck80ojSw2VQWfwFfnY";
-    res = await axios.get(
+    const giphyRes = await axios.get(
       `https://api.giphy.com/v1/gifs/${gifId}?api_key=${process.env.GIPHY_API_KEY}`
     );
 
     // Download GIF
-    console.log(`Sending request to: ${res.data.images["original"].url}`);
-    res = await axios.get(res.data.images["original"].url);
+    console.log(`Sending request to: ${giphyRes.data.images["original"].url}`);
+    const rawGif = await axios.get(giphyRes.data.images["original"].url);
 
     // Combine gif with result
-    const output = await sharp(res.data, { animated: true })
-      .composite([{ input: fileLocation, tile: false, blend: "source" }])
+    const output = await sharp(Buffer.from(rawGif.data, "base64"), {
+      animated: true,
+    })
+      .composite([
+        {
+          input: Buffer.from(removebgRes.data, "base64"),
+          tile: false,
+          blend: "source",
+        },
+      ])
       .toBuffer();
 
     return {
