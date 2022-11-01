@@ -43,12 +43,12 @@ exports.handler = async (event, context) => {
     console.log("Combining");
 
     // Combine gif with result
-    const output = await sharp(Buffer.from(rawGif.data, "base64"), {
+    const output = await sharp(rawGif.data, {
       animated: true,
     })
       .composite([
         {
-          input: Buffer.from(removebgRes.data, "base64"),
+          input: removebgRes.data,
           tile: false,
           blend: "source",
         },
