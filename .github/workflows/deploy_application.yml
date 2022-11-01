@@ -47,18 +47,22 @@ jobs:
       - name: Setup Node 🏗
         uses: actions/setup-node@v3
         with:
-          node-version: "16"
+          node-version: "14"
 
       - name: Install packages 📀
         run: npm ci
         working-directory: ./app
 
       - name: Create Deployment Package 🎁
-        run: zip -r lambda.zip .
+        run: zip -9 -r lambda.zip .
+        working-directory: ./app
+
+      - name: Upload Deployment Package to S3 ☁️
+        run: aws s3 cp ./lambda.zip s3://image-wower/lambda.zip
         working-directory: ./app
 
       - name: Deploy Lambda Function 🚀
         env:
           LAMBDA_FUNCTION_NAME: ${{ env.LAMBDA_FUNCTION_NAME }}
-        run: aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file fileb://lambda.zip
+        run: aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --s3-bucket image-wower --s3-key lambda.zip
         working-directory: ./app
