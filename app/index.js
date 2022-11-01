@@ -29,6 +29,8 @@ exports.handler = async (event, context) => {
       }
     );
 
+    console.log(`remove.bg response: ${JSON.stringify(res)}`);
+
     // Save image locally
     const fileLocation = `/tmp/${uuidv4()}.png`;
     fs.writeFileSync(fileLocation, res.data);
