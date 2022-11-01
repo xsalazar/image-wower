@@ -17,9 +17,7 @@ exports.handler = async (event, context) => {
     formData.append("image_file", event.body);
 
     // Request for background removal
-    const res = await axios({
-      method: "post",
-      url: "https://api.remove.bg/v1.0/removebg",
+    const res = await axios.post("https://api.remove.bg/v1.0/removebg", {
       data: formData,
       responseType: "arraybuffer",
       headers: {
@@ -52,7 +50,9 @@ exports.handler = async (event, context) => {
         imageData: output,
       }),
     };
-  } catch {
+  } catch (e) {
+    console.log(e.stack);
+
     return {
       cookies: [],
       isBase64Encoded: false,
