@@ -1,0 +1,17 @@
+{
+  "name": "image-wower",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "canvas": "^2.10.1",
+    "sharp": "^0.31.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
