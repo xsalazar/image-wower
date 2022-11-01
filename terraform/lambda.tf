@@ -11,11 +11,8 @@ resource "aws_lambda_function" "instance" {
   timeout       = 30   // seconds
   memory_size   = 1536 // MB
 
-  // See: https://www.jvt.me/posts/2022/04/08/node-canvas-lambda/
-  layers = ["arn:aws:lambda:us-west-2:368081326042:layer:canvas-nodejs:1"]
   environment {
     variables = {
-      LD_PRELOAD : "/var/task/node_modules/canvas/build/Release/libz.so.1"
       REMOVE_BG_API_KEY = var.remove_bg_api_key
     }
   }
