@@ -30,8 +30,7 @@ exports.handler = async (event, context) => {
     );
 
     // Download GIF
-    console.log(`Sending request to: ${giphyRes.data.images["original"].url}`);
-    const rawGif = await axios.get(giphyRes.data.images["original"].url);
+    const rawGif = await axios.get(giphyRes.data.data.images.original.url);
 
     // Combine gif with result
     const output = await sharp(Buffer.from(rawGif.data, "base64"), {
