@@ -53,13 +53,15 @@ exports.handler = async (event, context) => {
       ])
       .toBuffer();
 
+    console.log("Returning");
+
     return {
       cookies: [],
-      isBase64Encoded: false,
+      isBase64Encoded: true,
       statusCode: 200,
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        imageData: output,
+        imageData: output.toString("base64"),
       }),
     };
   } catch (e) {
