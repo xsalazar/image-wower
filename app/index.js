@@ -1,6 +1,5 @@
 const sharp = require("sharp");
 const axios = require("axios");
-const FormData = require("form-data");
 const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 
@@ -12,18 +11,15 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Generate request form to remove.bg
-    const formData = new FormData();
-    formData.append("image_file_b64", event.body);
-
     // Request for background removal
     let res = await axios.post(
       "https://api.remove.bg/v1.0/removebg",
-      formData,
+      {
+        image_file_b64: event.body,
+      },
       {
         responseType: "arraybuffer",
         headers: {
-          ...formData.getHeaders(),
           "X-Api-Key": `${process.env.REMOVE_BG_API_KEY}`,
         },
       }
