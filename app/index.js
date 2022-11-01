@@ -40,6 +40,7 @@ exports.handler = async (event, context) => {
     );
 
     // Download GIF
+    console.log(`Sending request to: ${res.data.images["original"].url}`);
     res = await axios.get(res.data.images["original"].url);
 
     // Combine gif with result
