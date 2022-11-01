@@ -1,7 +1,5 @@
 const sharp = require("sharp");
 const axios = require("axios");
-const fs = require("fs");
-const { v4: uuidv4 } = require("uuid");
 
 exports.handler = async (event, context) => {
   console.log(JSON.stringify(event));
@@ -24,8 +22,6 @@ exports.handler = async (event, context) => {
         },
       }
     );
-
-    console.log(`remove.bg response: ${JSON.stringify(removebgRes)}`);
 
     // Get GIF by ID from Giphy API
     const gifId = "Ck80ojSw2VQWfwFfnY";
