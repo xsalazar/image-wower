@@ -32,12 +32,12 @@ jobs:
 
       - name: Terraform Init ✨
         id: init
-        run: terraform init -upgrade -var 'remove_bg_api_key=${{ secrets.REMOVE_BG_API_KEY }}'
+        run: terraform init -upgrade -var 'remove_bg_api_key=${{ secrets.REMOVE_BG_API_KEY }}' -var 'giphy_api_key=${{ secrets.GIPHY_API_KEY }}'
         working-directory: ./terraform
 
       - name: Terraform Apply 🚀
         id: apply
-        run: terraform apply -auto-approve -var 'remove_bg_api_key=${{ secrets.REMOVE_BG_API_KEY }}'
+        run: terraform apply -auto-approve -var 'remove_bg_api_key=${{ secrets.REMOVE_BG_API_KEY }}' -var 'giphy_api_key=${{ secrets.GIPHY_API_KEY }}'
         working-directory: ./terraform
 
       - name: Save Lambda function name to Environment Variables 💾

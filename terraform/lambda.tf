@@ -2,18 +2,23 @@ variable "remove_bg_api_key" {
   type = string
 }
 
+variable "giphy_api_key" {
+  type = string
+}
+
 resource "aws_lambda_function" "instance" {
   function_name = "image-wower"
   filename      = "${path.module}/dummy-lambda-package/lambda.zip" // Simple hello world application
   role          = aws_iam_role.instance.arn
   handler       = "index.handler"
-  runtime       = "nodejs14.x"
+  runtime       = "nodejs16.x"
   timeout       = 30   // seconds
   memory_size   = 1536 // MB
 
   environment {
     variables = {
-      REMOVE_BG_API_KEY = var.remove_bg_api_key
+      REMOVE_BG_API_KEY = var.remove_bg_api_key,
+      GIPHY_API_KEY     = var.giphy_api_key
     }
   }
 
