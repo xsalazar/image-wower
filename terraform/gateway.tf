@@ -3,7 +3,7 @@ resource "aws_apigatewayv2_api" "instance" {
   protocol_type = "HTTP"
   cors_configuration {
     allow_origins = ["https://wowemoji.dev"]
-    allow_methods = ["GET"]
+    allow_methods = ["PUT"]
     allow_headers = ["*"]
   }
 }
@@ -17,7 +17,7 @@ resource "aws_apigatewayv2_integration" "instance" {
 
 resource "aws_apigatewayv2_route" "instance" {
   api_id    = aws_apigatewayv2_api.instance.id
-  route_key = "GET /"
+  route_key = "PUT /"
   target    = "integrations/${aws_apigatewayv2_integration.instance.id}"
 }
 
