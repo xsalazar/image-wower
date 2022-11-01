@@ -17,7 +17,7 @@ exports.handler = async (event, context) => {
     formData.append("image_file", event.body);
 
     // Request for background removal
-    const res = await axios.post("https://api.remove.bg/v1.0/removebg", {
+    let res = await axios.post("https://api.remove.bg/v1.0/removebg", {
       data: formData,
       responseType: "arraybuffer",
       headers: {
@@ -31,13 +31,17 @@ exports.handler = async (event, context) => {
     const fileLocation = `/tmp/${uuidv4()}.png`;
     fs.writeFileSync(fileLocation, res.data);
 
-    // Download background gif
-    const background = await axios.get(
-      "https://media4.giphy.com/media/Ck80ojSw2VQWfwFfnY/giphy.gif"
+    // Get GIF by ID from Giphy API
+    const gifId = "Ck80ojSw2VQWfwFfnY";
+    res = await axios.get(
+      `https://api.giphy.com/v1/gifs/${gifId}?api_key=${process.env.GIPHY_API_KEY}`
     );
 
+    // Download GIF
+    res = await axios.get(res.data.images["original"].url);
+
     // Combine gif with result
-    const output = await sharp(background.data, { animated: true })
+    const output = await sharp(res.data, { animated: true })
       .composite([{ input: fileLocation, tile: false, blend: "source" }])
       .toBuffer();
 
