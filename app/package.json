@@ -4,6 +4,8 @@
   "main": "index.js",
   "dependencies": {
     "canvas": "^2.10.1",
+    "form-data": "^4.0.0",
+    "fs": "0.0.1-security",
     "sharp": "^0.31.1",
     "uuid": "^9.0.0"
   },
