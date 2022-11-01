@@ -14,7 +14,7 @@ exports.handler = async (event, context) => {
   try {
     // Generate request form to remove.bg
     const formData = new FormData();
-    formData.append("image_file", event.body);
+    formData.append("image_file_b64", event.body);
 
     // Request for background removal
     let res = await axios.post(
@@ -26,7 +26,6 @@ exports.handler = async (event, context) => {
           ...formData.getHeaders(),
           "X-Api-Key": `${process.env.REMOVE_BG_API_KEY}`,
         },
-        transformRequest: () => formData,
       }
     );
 
