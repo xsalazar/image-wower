@@ -17,15 +17,18 @@ exports.handler = async (event, context) => {
     formData.append("image_file", event.body);
 
     // Request for background removal
-    let res = await axios.post("https://api.remove.bg/v1.0/removebg", {
-      data: formData,
-      responseType: "arraybuffer",
-      headers: {
-        ...formData.getHeaders(),
-        "X-Api-Key": `${process.env.REMOVE_BG_API_KEY}`,
-      },
-      encoding: null,
-    });
+    let res = await axios.post(
+      "https://api.remove.bg/v1.0/removebg",
+      formData,
+      {
+        responseType: "arraybuffer",
+        headers: {
+          ...formData.getHeaders(),
+          "X-Api-Key": `${process.env.REMOVE_BG_API_KEY}`,
+        },
+        encoding: null,
+      }
+    );
 
     // Save image locally
     const fileLocation = `/tmp/${uuidv4()}.png`;
