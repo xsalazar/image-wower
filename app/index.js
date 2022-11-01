@@ -26,6 +26,7 @@ exports.handler = async (event, context) => {
           ...formData.getHeaders(),
           "X-Api-Key": `${process.env.REMOVE_BG_API_KEY}`,
         },
+        transformRequest: () => formData,
       }
     );
 
