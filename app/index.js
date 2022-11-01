@@ -31,7 +31,7 @@ exports.handler = async (event, context) => {
 
     // Save image locally
     const fileLocation = `/tmp/${uuidv4()}.png`;
-    fs.writeFileSync(fileLocation, response.data);
+    fs.writeFileSync(fileLocation, res.data);
 
     // Download background gif
     const background = await axios.get(
