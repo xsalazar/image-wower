@@ -11,11 +11,13 @@ exports.handler = async (event, context) => {
   try {
     console.log("Sending request to remove.bg");
 
-    // Request for background removal
+    // Send request for background removal
     const removebgRes = await axios.post(
       "https://api.remove.bg/v1.0/removebg",
       {
         image_file_b64: event.body,
+        size: "preview",
+        type: "person",
       },
       {
         responseType: "arraybuffer",
@@ -24,6 +26,11 @@ exports.handler = async (event, context) => {
         },
       }
     );
+
+    // Resize to 500x500
+    const resizedRemovedBG = await sharp(removebgRes.data)
+      .resize({ width: 500, height: 500 })
+      .toBuffer();
 
     console.log("Sending request to Giphy");
 
@@ -46,16 +53,18 @@ exports.handler = async (event, context) => {
     const output = await sharp(rawGif.data, {
       animated: true,
     })
+      .resize({ width: 500, height: 500 })
       .composite([
         {
-          input: removebgRes.data,
-          tile: false,
-          blend: "source",
+          input: resizedRemovedBG,
+          tile: true,
+          top: 0,
+          left: 0,
         },
       ])
       .toBuffer();
 
-    console.log("Returning");
+    console.log("Returning data");
 
     return {
       cookies: [],
