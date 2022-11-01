@@ -70,10 +70,8 @@ exports.handler = async (event, context) => {
       cookies: [],
       isBase64Encoded: true,
       statusCode: 200,
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        imageData: output.toString("base64"),
-      }),
+      headers: { "content-type": "image/gif" },
+      body: output.toString("base64"),
     };
   } catch (e) {
     console.log(JSON.stringify(e));
