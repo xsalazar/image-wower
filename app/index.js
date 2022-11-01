@@ -55,7 +55,7 @@ exports.handler = async (event, context) => {
       }),
     };
   } catch (e) {
-    console.log(e.stack);
+    console.log(JSON.stringify(e));
 
     return {
       cookies: [],
