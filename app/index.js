@@ -9,26 +9,26 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    console.log("Sending request to remove.bg");
+    // console.log("Sending request to remove.bg");
 
     // Send request for background removal
-    const removebgRes = await axios.post(
-      "https://api.remove.bg/v1.0/removebg",
-      {
-        image_file_b64: event.body,
-        size: "preview",
-        type: "person",
-      },
-      {
-        responseType: "arraybuffer",
-        headers: {
-          "X-Api-Key": `${process.env.REMOVE_BG_API_KEY}`,
-        },
-      }
-    );
+    // const removebgRes = await axios.post(
+    //   "https://api.remove.bg/v1.0/removebg",
+    //   {
+    //     image_file_b64: event.body,
+    //     size: "preview",
+    //     type: "person",
+    //   },
+    //   {
+    //     responseType: "arraybuffer",
+    //     headers: {
+    //       "X-Api-Key": `${process.env.REMOVE_BG_API_KEY}`,
+    //     },
+    //   }
+    // );
 
     // Resize to 500x500
-    const resizedRemovedBG = await sharp(removebgRes.data)
+    const resizedRemovedBG = await sharp(event.body)
       .resize({ width: 500, height: 500 })
       .toBuffer();
 
