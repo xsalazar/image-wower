@@ -1,5 +1,6 @@
 const sharp = require("sharp");
 const axios = require("axios");
+const { v4: uuidv4 } = require("uuid");
 
 exports.handler = async (event, context) => {
   console.log(JSON.stringify(event));
@@ -27,10 +28,11 @@ exports.handler = async (event, context) => {
     //   }
     // );
 
-    // Resize to 500x500
-    const resizedRemovedBG = await sharp(Buffer.from(event.body, "base64"))
-      .resize({ width: 250, height: 250 })
-      .toBuffer();
+    // Resize to 500x500 and save to tmp
+    const removedBgPath = `/tmp/${uuidv4()}.png`;
+    await sharp(Buffer.from(event.body, "base64"))
+      .resize({ width: 500, height: 500 })
+      .toFile(removedBgPath);
 
     console.log("Sending request to Giphy");
 
@@ -47,24 +49,33 @@ exports.handler = async (event, context) => {
       responseType: "arraybuffer",
     });
 
-    console.log("Combining");
-
-    // Combine gif with result
-    const finalResult = sharp(rawGif.data, {
+    // Resize to 500x500 and save file
+    const gifPath = `/tmp/${uuidv4()}.gif`;
+    await sharp(rawGif.data, {
       animated: true,
     })
       .resize({ width: 500, height: 500 })
+      .toFile(gifPath);
+
+    console.log("Combining");
+
+    // Combine gif with result
+    const compositePath = `/tmp/${uuidv4()}.gif`;
+    await sharp(gifPath, {
+      animated: true,
+    })
       .composite([
         {
-          input: resizedRemovedBG,
+          input: removedBgPath,
           tile: false,
           top: 0,
           left: 0,
         },
-      ]);
+      ])
+      .toFile(compositePath);
 
-    const fullSize = await finalResult.toBuffer();
-    const smallSize = await finalResult
+    const fullSize = await sharp(compositePath, { animated: true }).toBuffer();
+    const smallSize = await sharp(compositePath, { animated: true })
       .resize({ width: 64, height: 64 })
       .toBuffer();
 
