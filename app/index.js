@@ -50,18 +50,22 @@ exports.handler = async (event, context) => {
     console.log("Combining");
 
     // Combine gif with result
-    const output = await sharp(rawGif.data, {
+    const finalResult = sharp(rawGif.data, {
       animated: true,
     })
       .resize({ width: 500, height: 500 })
       .composite([
         {
           input: resizedRemovedBG,
-          tile: true,
+          tile: false,
           top: 0,
           left: 0,
         },
-      ])
+      ]);
+
+    const fullSize = await finalResult.toBuffer();
+    const smallSize = await finalResult
+      .resize({ width: 64, height: 64 })
       .toBuffer();
 
     console.log("Returning data");
@@ -71,7 +75,10 @@ exports.handler = async (event, context) => {
       isBase64Encoded: true,
       statusCode: 200,
       headers: { "content-type": "application/json" },
-      body: output.toString("base64"),
+      body: JSON.stringify({
+        wowifiedFull: fullSize.toString("base64"),
+        wowifiedSmall: smallSize.toString("base64"),
+      }),
     };
   } catch (e) {
     console.log(JSON.stringify(e));
