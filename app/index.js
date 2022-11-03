@@ -67,7 +67,7 @@ exports.handler = async (event, context) => {
       .composite([
         {
           input: removedBgPath,
-          tile: false,
+          tile: true,
           top: 0,
           left: 0,
         },
