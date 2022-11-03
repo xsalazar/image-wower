@@ -28,8 +28,8 @@ exports.handler = async (event, context) => {
     // );
 
     // Resize to 500x500
-    const resizedRemovedBG = await sharp(event.body)
-      .resize({ width: 500, height: 500 })
+    const resizedRemovedBG = await sharp(Buffer.from(event.body, "base64"))
+      .resize({ width: 250, height: 250 })
       .toBuffer();
 
     console.log("Sending request to Giphy");
@@ -70,8 +70,8 @@ exports.handler = async (event, context) => {
       cookies: [],
       isBase64Encoded: true,
       statusCode: 200,
-      headers: { "content-type": "image/gif" },
-      body: `data:image/gif;base64,${output.toString("base64")}`,
+      headers: { "content-type": "application/json" },
+      body: output.toString("base64"),
     };
   } catch (e) {
     console.log(JSON.stringify(e));
