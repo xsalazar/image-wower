@@ -71,7 +71,7 @@ exports.handler = async (event, context) => {
       isBase64Encoded: true,
       statusCode: 200,
       headers: { "content-type": "image/gif" },
-      body: output.toString("base64"),
+      body: `data:image/gif;base64,${output.toString("base64")}`,
     };
   } catch (e) {
     console.log(JSON.stringify(e));
