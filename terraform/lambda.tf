@@ -12,7 +12,7 @@ resource "aws_lambda_function" "instance" {
   role          = aws_iam_role.instance.arn
   handler       = "index.handler"
   runtime       = "nodejs16.x"
-  timeout       = 30   // seconds
+  timeout       = 60   // seconds
   memory_size   = 1536 // MB
 
   environment {
