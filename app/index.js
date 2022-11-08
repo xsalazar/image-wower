@@ -86,12 +86,12 @@ exports.handler = async (event, context) => {
     // Combine gif with result and save file to tmp directory
     const originalSizePath = `/tmp/${uuidv4()}.gif`;
     execSync(
-      `/opt/bin/convert ${gifPath} null: ${removedBgPath} -gravity center -layers composite -fuzz 3% -layers optimize ${compositePath}`
+      `/opt/bin/convert ${gifPath} null: ${removedBgPath} -gravity center -layers composite -fuzz 3% -layers optimize ${originalSizePath}`
     );
 
     const smallSizePath = `/tmp/${uuidv4()}.gif`;
     execSync(
-      `/opt/bin/convert ${gifPath} null: ${removedBgPath} -gravity center -layers composite -fuzz 3% -layers optimize -resize 64x64 ${compositePath}`
+      `/opt/bin/convert ${gifPath} null: ${removedBgPath} -gravity center -layers composite -fuzz 3% -layers optimize -resize 64x64 ${smallSizePath}`
     );
 
     // Generate original and small size data
