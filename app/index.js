@@ -36,7 +36,7 @@ exports.handler = async (event, context) => {
 
     console.log("Sending request to Giphy");
 
-    // Get GIF by ID from Giphy API
+    // Get random GIF by ID from Giphy API
     const gifs = [
       "Ck80ojSw2VQWfwFfnY",
       "cS8Dk5NywlGLvaIV0r",
@@ -59,6 +59,7 @@ exports.handler = async (event, context) => {
       "26vUyWzmjBIlNJvRC",
       "h7dhRBp5YXZqQ0mr3f",
     ];
+
     const gifId = gifs[Math.floor(Math.random() * gifs.length)];
     const giphyRes = await axios.get(
       `https://api.giphy.com/v1/gifs/${gifId}?api_key=${process.env.GIPHY_API_KEY}`
@@ -83,23 +84,15 @@ exports.handler = async (event, context) => {
 
     // Combine gif with result and save file to tmp directory
     const compositePath = `/tmp/${uuidv4()}.gif`;
-    await sharp(gifPath, {
-      animated: true,
-    })
-      .composite([
-        {
-          input: removedBgPath,
-          tile: true,
-          top: 0,
-          left: 0,
-        },
-      ])
-      .toFile(compositePath);
+    execSync(
+      `/opt/bin/convert ${gifPath} null: ${removedBgPath} -gravity center -layers composite -layers optimize ${compositePath}`
+    );
 
     // Generate original and small size data
     const originalSize = await sharp(compositePath, {
       animated: true,
     }).toBuffer();
+
     const smallSize = await sharp(compositePath, { animated: true })
       .resize({ width: 64, height: 64 })
       .toBuffer();
