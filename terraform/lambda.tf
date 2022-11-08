@@ -22,6 +22,10 @@ resource "aws_lambda_function" "instance" {
     }
   }
 
+  layers = [
+    aws_lambda_layer_version.instance.arn
+  ]
+
   // Since CI/CD will deploy this application externally, these do not need to be tracked after creation
   lifecycle {
     ignore_changes = [
@@ -35,4 +39,10 @@ resource "aws_lambda_function" "instance" {
 resource "aws_cloudwatch_log_group" "instance" {
   name              = "/aws/lambda/${aws_lambda_function.instance.function_name}"
   retention_in_days = 30 // days
+}
+
+resource "aws_lambda_layer_version" "instance" {
+  filename            = "${path.module}/imagemagick-lambda-layer-package/imagemagick.zip"
+  layer_name          = "image-wower-imagemagick-layer"
+  compatible_runtimes = ["nodejs16.x"]
 }
