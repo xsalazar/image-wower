@@ -84,19 +84,22 @@ exports.handler = async (event, context) => {
     console.log("Wowifying");
 
     // Combine gif with result and save file to tmp directory
-    const compositePath = `/tmp/${uuidv4()}.gif`;
+    const originalSizePath = `/tmp/${uuidv4()}.gif`;
     execSync(
-      `/opt/bin/convert ${gifPath} null: ${removedBgPath} -gravity center -layers composite -layers optimize ${compositePath}`
+      `/opt/bin/convert ${gifPath} null: ${removedBgPath} -gravity center -layers composite -fuzz 3% -layers optimize ${compositePath}`
+    );
+
+    const smallSizePath = `/tmp/${uuidv4()}.gif`;
+    execSync(
+      `/opt/bin/convert ${gifPath} null: ${removedBgPath} -gravity center -layers composite -fuzz 3% -layers optimize -resize 64x64 ${compositePath}`
     );
 
     // Generate original and small size data
-    const originalSize = await sharp(compositePath, {
+    const originalSize = await sharp(originalSizePath, {
       animated: true,
     }).toBuffer();
 
-    const smallSize = await sharp(compositePath, { animated: true })
-      .resize({ width: 64, height: 64 })
-      .toBuffer();
+    const smallSize = await sharp(smallSizePath, { animated: true }).toBuffer();
 
     console.log("Returning data");
 
