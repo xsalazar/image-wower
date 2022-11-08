@@ -1,7 +1,7 @@
 const sharp = require("sharp");
 const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
-const { exec: execSync } = require("child_process");
+const { execSync } = require("child_process");
 
 exports.handler = async (event, context) => {
   console.log(JSON.stringify(event));
