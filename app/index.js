@@ -91,7 +91,7 @@ exports.handler = async (event, context) => {
 
     const smallSizePath = `/tmp/${uuidv4()}.gif`;
     execSync(
-      `/opt/bin/convert ${gifPath} null: ${removedBgPath} -gravity center -layers composite -fuzz 3% -layers optimize -resize 64x64 ${smallSizePath}`
+      `/opt/bin/convert ${originalSizePath} -resize 64x64 ${smallSizePath}`
     );
 
     // Generate original and small size data
