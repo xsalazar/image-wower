@@ -45,7 +45,7 @@ resource "aws_iam_policy" "instance" {
   policy = data.aws_iam_policy_document.s3_access_policy_document.json
 }
 
-resource "aws_iam_policy_attachment" "instance" {
+resource "aws_iam_role_policy_attachment" "instance" {
   role       = aws_iam_role.instance.id
   policy_arn = aws_iam_policy.instance.arn
 }
