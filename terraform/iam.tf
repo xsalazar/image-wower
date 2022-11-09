@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "s3_access_policy_document" {
   statement {
     effect    = "Allow"
     actions   = ["s3:*"]
-    resources = ["${aws_s3_bucket.instance.arn}", "${aws_s3_bucket.instance.arn}/*"]
+    resources = ["${aws_s3_bucket.instance.arn}", "${aws_s3_bucket.instance.arn}/*", "${aws_s3_bucket.rembg.arn}", "${aws_s3_bucket.rembg.arn}/*"]
   }
 
   // From AWSLambdaVPCAccessExecutionRole
