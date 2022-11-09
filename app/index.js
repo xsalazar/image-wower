@@ -15,17 +15,20 @@ exports.handler = async (event, context) => {
 
   try {
     const S3 = new AWS.S3();
-    console.log("Downloading binary");
 
-    // Grab from local S3 bucket
-    const lib = await S3.getObject({
-      Bucket: process.env.REMBG_BUCKET,
-      Key: "u2net.onnx",
-    }).promise();
+    // Put binary in U2NET_HOME dir if it doesn't exist
+    if (!fs.existsSync(`${U2NET_HOME}`)) {
+      console.log("Downloading binary");
 
-    // Put in U2NET_HOME dir
-    fs.mkdirSync(`${U2NET_HOME}`);
-    fs.writeFileSync(`${U2NET_HOME}/u2net.onnx`, lib.Body);
+      // Grab from local S3 bucket
+      const lib = await S3.getObject({
+        Bucket: process.env.REMBG_BUCKET,
+        Key: "u2net.onnx",
+      }).promise();
+
+      fs.mkdirSync(`${U2NET_HOME}`);
+      fs.writeFileSync(`${U2NET_HOME}/u2net.onnx`, lib.Body);
+    }
 
     console.log("Removing background");
 
