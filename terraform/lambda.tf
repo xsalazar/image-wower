@@ -56,3 +56,7 @@ resource "aws_lambda_layer_version" "instance" {
 resource "aws_s3_bucket" "instance" {
   bucket = "image-wower-gifs"
 }
+
+resource "aws_s3_bucket" "rembg" {
+  bucket = "rembg-binary"
+}
