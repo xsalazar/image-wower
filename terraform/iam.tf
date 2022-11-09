@@ -10,14 +10,44 @@ data "aws_iam_policy_document" "assume_role_policy_document" {
   }
 }
 
+data "aws_iam_policy_document" "s3_access_policy_document" {
+  version = "2012-10-17"
+  statement {
+    effect    = "Allow"
+    actions   = ["s3:*"]
+    resources = ["${aws_s3_bucket.instance.arn}", "${aws_s3_bucket.instance.arn}/*"]
+  }
+
+  // From AWSLambdaVPCAccessExecutionRole
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "ec2:CreateNetworkInterface",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DeleteNetworkInterface",
+      "ec2:AssignPrivateIpAddresses",
+      "ec2:UnassignPrivateIpAddresses"
+    ]
+    resources = ["*"]
+  }
+}
+
 resource "aws_iam_role" "instance" {
   name               = "lambda-iam-role-image-wower"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy_document.json
 }
 
-resource "aws_iam_role_policy_attachment" "instance" {
+resource "aws_iam_policy" "instance" {
+  name   = "lambda-image-wower-iam-policy"
+  policy = data.aws_iam_policy_document.s3_access_policy_document.json
+}
+
+resource "aws_iam_policy_attachment" "instance" {
   role       = aws_iam_role.instance.id
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+  policy_arn = aws_iam_policy.instance.arn
 }
 
 resource "aws_lambda_permission" "lambda_root_permission" {

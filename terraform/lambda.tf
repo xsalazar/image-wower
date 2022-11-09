@@ -51,3 +51,7 @@ resource "aws_lambda_layer_version" "instance" {
   layer_name          = "image-wower-imagemagick-layer"
   compatible_runtimes = ["nodejs16.x"]
 }
+
+resource "aws_s3_bucket" "instance" {
+  bucket = "image-wower-gifs"
+}
