@@ -3,6 +3,7 @@ const rembg = require("rembg-node").Rembg;
 const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
 const { execSync } = require("child_process");
+const AWS = require("aws-sdk");
 
 exports.handler = async (event, context) => {
   console.log(JSON.stringify(event));
@@ -22,9 +23,10 @@ exports.handler = async (event, context) => {
       .resize({ width: 500, height: 500 })
       .toFile(removedBgPath);
 
-    console.log("Sending request to Giphy");
+    console.log("Getting gif from S3");
 
-    // Get random GIF by ID from Giphy API
+    const S3 = new AWS.S3();
+    // Get random GIF ID
     const gifs = [
       "Ck80ojSw2VQWfwFfnY",
       "cS8Dk5NywlGLvaIV0r",
@@ -60,20 +62,15 @@ exports.handler = async (event, context) => {
     ];
 
     const gifId = gifs[Math.floor(Math.random() * gifs.length)];
-    const giphyRes = await axios.get(
-      `https://api.giphy.com/v1/gifs/${gifId}?api_key=${process.env.GIPHY_API_KEY}`
-    );
 
-    console.log("Downloading gif");
-
-    // Download GIF
-    const rawGif = await axios.get(giphyRes.data.data.images.original.url, {
-      responseType: "arraybuffer",
-    });
+    const gifRes = await S3.getObject({
+      Bucket: process.env.GIF_BUCKET,
+      Key: `${gifId}.gif`,
+    }).promise();
 
     // Resize to 500x500 and save file to tmp directory
     const gifPath = `/tmp/${uuidv4()}.gif`;
-    await sharp(rawGif.data, {
+    await sharp(Buffer.from(gifRes.Body, "base64"), {
       animated: true,
     })
       .resize({ width: 500, height: 500 })
