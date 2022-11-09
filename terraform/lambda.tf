@@ -13,12 +13,17 @@ resource "aws_lambda_function" "instance" {
   handler       = "index.handler"
   runtime       = "nodejs16.x"
   timeout       = 60   // seconds
-  memory_size   = 1536 // MB
+  memory_size   = 4096 // MB
+
+  ephemeral_storage {
+    size = 4096 # Min 512 MB and the Max 10240 MB
+  }
 
   environment {
     variables = {
       REMOVE_BG_API_KEY = var.remove_bg_api_key,
       GIPHY_API_KEY     = var.giphy_api_key
+      U2NET_HOME        = "/tmp/u2net/"
     }
   }
 
