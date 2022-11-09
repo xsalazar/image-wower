@@ -1,5 +1,4 @@
 const sharp = require("sharp");
-const rembg = require("rembg-node").Rembg;
 const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
 const { execSync } = require("child_process");
@@ -12,16 +11,29 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    console.log("Removing background");
+    console.log("Sending request to remove.bg");
 
-    const inputImage = sharp(Buffer.from(event.body, "base64")).resize({
-      width: 500,
-      height: 500,
-    });
+    // Send request for background removal
+    const removebgRes = await axios.post(
+      "https://api.remove.bg/v1.0/removebg",
+      {
+        image_file_b64: event.body,
+        size: "preview",
+        type: "person",
+      },
+      {
+        responseType: "arraybuffer",
+        headers: {
+          "X-Api-Key": `${process.env.REMOVE_BG_API_KEY}`,
+        },
+      }
+    );
 
-    const remover = new rembg();
+    // Resize result to 500x500 and save to tmp directory
     const removedBgPath = `/tmp/${uuidv4()}.png`;
-    await (await remover.remove(inputImage)).toFile(removedBgPath);
+    await sharp(removebgRes.data)
+      .resize({ width: 500, height: 500 })
+      .toFile(removedBgPath);
 
     console.log("Sending request to Giphy");
 
