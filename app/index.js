@@ -4,7 +4,6 @@ const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
 const { execSync } = require("child_process");
 const AWS = require("aws-sdk");
-var fs = require("fs");
 
 exports.handler = async (event, context) => {
   console.log(JSON.stringify(event));
@@ -14,18 +13,6 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const S3 = new AWS.S3();
-    console.log("Downloading binary");
-
-    // Grab from local S3 bucket
-    const lib = await S3.getObject({
-      Bucket: process.env.REMBG_BUCKET,
-      Key: "u2net.onnx",
-    }).promise();
-
-    // Put in U2NET_HOME dir
-    fs.writeFileSync(`${U2NET_HOME}/u2net.onnx`, lib.Body);
-
     console.log("Removing background");
 
     const inputImage = sharp(Buffer.from(event.body, "base64"));
@@ -38,6 +25,7 @@ exports.handler = async (event, context) => {
 
     console.log("Getting gif from S3");
 
+    const S3 = new AWS.S3();
     // Get random GIF ID
     const gifs = [
       "Ck80ojSw2VQWfwFfnY",
