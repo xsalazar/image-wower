@@ -25,6 +25,7 @@ resource "aws_lambda_function" "instance" {
       GIPHY_API_KEY     = var.giphy_api_key
       U2NET_HOME        = "/tmp/u2net/"
       GIF_BUCKET        = aws_s3_bucket.instance.id
+      REMBG_BUCKET      = aws_s3_bucket.rembg.id
     }
   }
 
