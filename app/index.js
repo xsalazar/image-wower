@@ -17,7 +17,7 @@ exports.handler = async (event, context) => {
     const S3 = new AWS.S3();
 
     // Put binary in U2NET_HOME dir if it doesn't exist
-    if (!fs.existsSync(`${U2NET_HOME}`)) {
+    if (!fs.existsSync(`${process.env.U2NET_HOME}`)) {
       console.log("Downloading binary");
 
       // Grab from local S3 bucket
@@ -26,8 +26,8 @@ exports.handler = async (event, context) => {
         Key: "u2net.onnx",
       }).promise();
 
-      fs.mkdirSync(`${U2NET_HOME}`);
-      fs.writeFileSync(`${U2NET_HOME}/u2net.onnx`, lib.Body);
+      fs.mkdirSync(`${process.env.U2NET_HOME}`);
+      fs.writeFileSync(`${process.env.U2NET_HOME}/u2net.onnx`, lib.Body);
     }
 
     console.log("Removing background");
