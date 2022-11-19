@@ -1,7 +1,7 @@
 FROM public.ecr.aws/lambda/nodejs:16
 
 # Copy function code
-COPY app.js package.json ${LAMBDA_TASK_ROOT}
+COPY app.js package.json ${LAMBDA_TASK_ROOT}/
 COPY gifs ${LAMBDA_TASK_ROOT}/gifs
 
 RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
