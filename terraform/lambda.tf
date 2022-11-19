@@ -21,6 +21,19 @@ resource "aws_lambda_function" "instance" {
   }
 }
 
+resource "aws_lambda_alias" "instance" {
+  name             = "image-wower-alias"
+  function_name    = aws_lambda_function.instance.arn
+  function_version = "1"
+
+  // Since CI/CD will deploy this application externally, these do not need to be tracked after creation
+  lifecycle {
+    ignore_changes = [
+      function_version
+    ]
+  }
+}
+
 resource "aws_cloudwatch_log_group" "instance" {
   name              = "/aws/lambda/${aws_lambda_function.instance.function_name}"
   retention_in_days = 30 // days
