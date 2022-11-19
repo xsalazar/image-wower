@@ -73,12 +73,9 @@ jobs:
           echo "IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
         working-directory: ./app
 
-      # - name: Create Deployment Package 🎁
-      #   run: zip -r lambda.zip .
-      #   working-directory: ./app
-
-      # - name: Deploy Lambda Function 🚀
-      #   env:
-      #     LAMBDA_FUNCTION_NAME: ${{ env.LAMBDA_FUNCTION_NAME }}
-      #   run: aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file fileb://lambda.zip
-      #   working-directory: ./app
+      - name: Deploy Lambda Function 🚀
+        env:
+          LAMBDA_FUNCTION_NAME: ${{ env.LAMBDA_FUNCTION_NAME }}
+          IMAGE_URI: ${{ env.IMAGE_URI }}
+        run: aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --image-uri $ECR_IMAGE
+        working-directory: ./app
