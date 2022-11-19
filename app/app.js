@@ -67,17 +67,17 @@ exports.handler = async (event, context) => {
     // Combine gif with result and save file to tmp directory
     const wowifiedOriginalSizePath = `/tmp/${uuidv4()}.gif`;
     execSync(
-      `convert ${gifPath} null: ${removedBgImagePath} -gravity center -layers composite -fuzz 3% -layers optimize ${wowifiedOriginalSizePath}`
-    );
-
-    const wowifiedCompressedOriginalSizePath = `/tmp/${uuidv4()}.gif`;
-    execSync(
-      `gifsicle -O3 --lossy=80 ${wowifiedOriginalSizePath} -o ${wowifiedCompressedOriginalSizePath}`
+      `convert ${gifPath} null: ${removedBgImagePath} -gravity center -layers composite -fuzz 5% -layers optimize ${wowifiedOriginalSizePath}`
     );
 
     const wowifiedSmallSizePath = `/tmp/${uuidv4()}.gif`;
     execSync(
-      `convert ${wowifiedCompressedOriginalSizePath} -resize 64x64 ${wowifiedSmallSizePath}`
+      `convert ${wowifiedOriginalSizePath} -resize 64x64 ${wowifiedSmallSizePath}`
+    );
+
+    const wowifiedCompressedSmallSizePath = `/tmp/${uuidv4()}`;
+    execSync(
+      `gifsicle -O3 --lossy=80 ${wowifiedSmallSizePath} -o ${wowifiedCompressedSmallSizePath}`
     );
 
     // Generate original and small size data
@@ -88,14 +88,15 @@ exports.handler = async (event, context) => {
     ).toString("base64");
 
     const smallSize = (
-      await sharp(wowifiedSmallSizePath, { animated: true }).toBuffer()
+      await sharp(wowifiedCompressedSmallSizePath, {
+        animated: true,
+      }).toBuffer()
     ).toString("base64");
 
     console.log("Cleaning up");
     fs.rmSync(inputPath);
     fs.rmSync(removedBgImagePath);
     fs.rmSync(wowifiedOriginalSizePath);
-    fs.rmSync(wowifiedCompressedOriginalSizePath);
     fs.rmSync(wowifiedSmallSizePath);
 
     console.log("Returning data");
