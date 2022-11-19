@@ -12,11 +12,6 @@ data "aws_iam_policy_document" "assume_role_policy_document" {
 
 data "aws_iam_policy_document" "s3_access_policy_document" {
   version = "2012-10-17"
-  statement {
-    effect    = "Allow"
-    actions   = ["s3:*"]
-    resources = ["${aws_s3_bucket.instance.arn}", "${aws_s3_bucket.instance.arn}/*", "${aws_s3_bucket.rembg.arn}", "${aws_s3_bucket.rembg.arn}/*"]
-  }
 
   // From AWSLambdaVPCAccessExecutionRole
   statement {

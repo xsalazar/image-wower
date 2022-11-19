@@ -1,4 +1,3 @@
-
 resource "aws_ecr_repository" "instance" {
   name = "image-wower-ecr-repo"
 }

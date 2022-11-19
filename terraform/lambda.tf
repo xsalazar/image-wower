@@ -1,9 +1,9 @@
 resource "aws_lambda_function" "instance" {
   function_name = "image-wower"
-  image_uri     = "368081326042.dkr.ecr.us-west-2.amazonaws.com/image-wower-ecr-repo:aeb86a74f0779287dc23947007cadaebfa4454a0"
+  image_uri     = "${aws_ecr_repository.instance.arn}:abc123"
   role          = aws_iam_role.instance.arn
-  timeout       = 30   // seconds -- matches API Gateway integration timeout limit
-  memory_size   = 4096 // MB
+  timeout       = 30    // seconds -- matches API Gateway integration timeout limit
+  memory_size   = 10240 // MB
   package_type  = "Image"
 
   ephemeral_storage {
@@ -24,12 +24,4 @@ resource "aws_lambda_function" "instance" {
 resource "aws_cloudwatch_log_group" "instance" {
   name              = "/aws/lambda/${aws_lambda_function.instance.function_name}"
   retention_in_days = 30 // days
-}
-
-resource "aws_s3_bucket" "instance" {
-  bucket = "image-wower-gifs"
-}
-
-resource "aws_s3_bucket" "rembg" {
-  bucket = "rembg-binary"
 }
