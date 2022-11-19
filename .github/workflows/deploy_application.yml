@@ -32,12 +32,16 @@ jobs:
 
       - name: Terraform Init ✨
         id: init
-        run: terraform init -upgrade -var 'remove_bg_api_key=${{ secrets.REMOVE_BG_API_KEY }}' -var 'giphy_api_key=${{ secrets.GIPHY_API_KEY }}'
+        run: terraform init -upgrade
         working-directory: ./terraform
 
       - name: Terraform Apply 🚀
         id: apply
-        run: terraform apply -auto-approve -var 'remove_bg_api_key=${{ secrets.REMOVE_BG_API_KEY }}' -var 'giphy_api_key=${{ secrets.GIPHY_API_KEY }}'
+        run: terraform apply -auto-approve
+        working-directory: ./terraform
+
+      - name: Save ECR name to Environment Variables 🛟
+        run: echo "ECR_NAME=$(terraform output -raw ecr_repository_name)" >> $GITHUB_ENV
         working-directory: ./terraform
 
       - name: Save Lambda function name to Environment Variables 💾
@@ -53,12 +57,35 @@ jobs:
         run: npm ci
         working-directory: ./app
 
-      - name: Create Deployment Package 🎁
-        run: zip -r lambda.zip .
+      - name: Download background Gifs 🌈
+        run: node helper.js
         working-directory: ./app
 
-      - name: Deploy Lambda Function 🚀
+      - name: Compile project 🧰
+        run: npm run compile
+
+      - name: Login to Amazon ECR 🧑‍💻
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR 🏷
+        id: build-image
         env:
-          LAMBDA_FUNCTION_NAME: ${{ env.LAMBDA_FUNCTION_NAME }}
-        run: aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file fileb://lambda.zip
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.ECR_NAME }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
         working-directory: ./app
+
+      # - name: Create Deployment Package 🎁
+      #   run: zip -r lambda.zip .
+      #   working-directory: ./app
+
+      # - name: Deploy Lambda Function 🚀
+      #   env:
+      #     LAMBDA_FUNCTION_NAME: ${{ env.LAMBDA_FUNCTION_NAME }}
+      #   run: aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file fileb://lambda.zip
+      #   working-directory: ./app
