@@ -34,6 +34,12 @@ resource "aws_lambda_alias" "instance" {
   }
 }
 
+resource "aws_lambda_provisioned_concurrency_config" "instance" {
+  function_name                     = aws_lambda_alias.instance.function_name
+  provisioned_concurrent_executions = 1
+  qualifier                         = aws_lambda_alias.instance.name
+}
+
 resource "aws_cloudwatch_log_group" "instance" {
   name              = "/aws/lambda/${aws_lambda_function.instance.function_name}"
   retention_in_days = 30 // days
