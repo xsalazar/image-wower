@@ -70,9 +70,14 @@ exports.handler = async (event, context) => {
       `convert ${gifPath} null: ${removedBgImagePath} -gravity center -layers composite -fuzz 5% -layers optimize ${wowifiedOriginalSizePath}`
     );
 
+    const wowifiedCompressedOriginalSizePath = `/tmp/${uuidv4()}.gif`;
+    execSync(
+      `gifsicle -O3 --lossy=80 ${wowifiedOriginalSizePath} -o ${wowifiedCompressedOriginalSizePath}`
+    );
+
     const wowifiedSmallSizePath = `/tmp/${uuidv4()}.gif`;
     execSync(
-      `convert ${wowifiedOriginalSizePath} -resize 64x64 ${wowifiedSmallSizePath}`
+      `convert ${wowifiedCompressedOriginalSizePath} -resize 64x64 -layers optimize ${wowifiedSmallSizePath}`
     );
 
     const wowifiedCompressedSmallSizePath = `/tmp/${uuidv4()}`;
@@ -97,7 +102,9 @@ exports.handler = async (event, context) => {
     fs.rmSync(inputPath);
     fs.rmSync(removedBgImagePath);
     fs.rmSync(wowifiedOriginalSizePath);
+    fs.rmSync(wowifiedCompressedOriginalSizePath);
     fs.rmSync(wowifiedSmallSizePath);
+    fs.rmSync(wowifiedCompressedSmallSizePath);
 
     console.log("Returning data");
     return {

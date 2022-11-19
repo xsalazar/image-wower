@@ -7,26 +7,13 @@ COPY gifs ${LAMBDA_TASK_ROOT}/gifs
 RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 RUN yum install -y php-pear \
                    php-devel \
+                   python3 \
                    python3-pip \
                    gcc \
                    openssl-devel \
                    ImageMagick \
                    ImageMagick-devel \
-                   gifsicle \
-                   tar \
-                   gzip \
-                   wget \
-                   make
-
-# Install Python 3.7
-WORKDIR /usr/src
-RUN wget https://www.python.org/ftp/python/3.7.15/Python-3.7.15.tgz
-RUN tar xzvf Python-3.7.15.tgz
-WORKDIR Python-3.7.15
-RUN ./configure --prefix=/opt/python3
-RUN make altinstall
-# RUN ln -s /opt/python3/bin/python3.7 /usr/bin/python3.7
-WORKDIR ${LAMBDA_TASK_ROOT}/
+                   gifsicle
 
 RUN pip3 install rembg gdown
 
