@@ -4,6 +4,7 @@ resource "aws_lambda_function" "instance" {
   role          = aws_iam_role.instance.arn
   timeout       = 30   // seconds -- matches API Gateway integration timeout limit
   memory_size   = 4096 // MB
+  package_type  = "Image"
 
   ephemeral_storage {
     size = 4096 # Min 512 MB and the Max 10240 MB
