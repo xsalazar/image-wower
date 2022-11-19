@@ -8,6 +8,9 @@ RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
 RUN yum install -y python3 python3-pip php-pear php-devel gcc ImageMagick ImageMagick-devel gifsicle
 RUN pip3 install rembg gdown
 
+# See: https://github.com/numba/numba/issues/4032
+ENV NUMBA_CACHE_DIR=/tmp/numba_cache
+
 # Make directory for u2net model, set that as environment variable, and download model
 RUN mkdir ${LAMBDA_TASK_ROOT}/u2net
 ENV U2NET_HOME=${LAMBDA_TASK_ROOT}/u2net
