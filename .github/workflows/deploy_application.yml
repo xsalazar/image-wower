@@ -59,6 +59,7 @@ jobs:
 
       - name: Compile project 🧰
         run: npm run compile
+        working-directory: ./app
 
       - name: Login to Amazon ECR 🧑‍💻
         id: login-ecr
