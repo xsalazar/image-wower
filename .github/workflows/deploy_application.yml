@@ -57,10 +57,6 @@ jobs:
         run: npm ci
         working-directory: ./app
 
-      - name: Compile project 🧰
-        run: npm run compile
-        working-directory: ./app
-
       - name: Login to Amazon ECR 🧑‍💻
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
