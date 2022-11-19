@@ -57,10 +57,6 @@ jobs:
         run: npm ci
         working-directory: ./app
 
-      - name: Download background Gifs 🌈
-        run: node helper.js
-        working-directory: ./app
-
       - name: Compile project 🧰
         run: npm run compile
 
