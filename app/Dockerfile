@@ -18,8 +18,5 @@ RUN gdown https://drive.google.com/uc?id=1tCU5MM1LhRgGou5OpmpjBQbSrYIUoYab -O ${
 
 RUN npm install
 
-# Warm up the model
-RUN curl -s https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/President_Barack_Obama.jpg/820px-President_Barack_Obama.jpg | rembg i
-
 # Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
 CMD [ "app.handler" ]
