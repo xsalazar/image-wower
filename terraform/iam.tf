@@ -40,7 +40,7 @@ data "aws_iam_policy_document" "s3_access_policy_document" {
     actions = [
       "ecr:SetRepositoryPolicy", "ecr:GetRepositoryPolicy"
     ]
-    resources = ["${aws_ecr_repository.arn}"]
+    resources = ["${aws_ecr_repository.instance.arn}"]
   }
 }
 
