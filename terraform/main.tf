@@ -22,14 +22,6 @@ provider "aws" {
   }
 }
 
-output "api_endpoint" {
-  value = aws_apigatewayv2_api.instance.api_endpoint
-}
-
-output "lambda_function" {
-  value = aws_lambda_function.instance.function_name
-}
-
 output "ecr_repository_name" {
   value = aws_ecr_repository.instance.name
 }

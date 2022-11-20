@@ -70,29 +70,9 @@ resource "template_dir" "task_definition" {
   }
 }
 
-resource "aws_cloudwatch_log_group" "ecs_instance" {
+resource "aws_cloudwatch_log_group" "instance" {
   name              = "/aws/ecs/${local.ecs_service_name}"
   retention_in_days = 30
 }
 
-data "aws_iam_policy_document" "ecs_assume_role_policy_document" {
-  version = "2012-10-17"
-  statement {
-    effect  = "Allow"
-    actions = ["sts:AssumeRole"]
-    principals {
-      identifiers = ["ecs-tasks.amazonaws.com"]
-      type        = "Service"
-    }
-  }
-}
 
-resource "aws_iam_role" "ecs_execution_role" {
-  name               = "ecs-execution-role"
-  assume_role_policy = data.aws_iam_policy_document.ecs_assume_role_policy_document.json
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_instance" {
-  role       = aws_iam_role.ecs_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
