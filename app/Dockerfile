@@ -11,7 +11,8 @@ RUN apt-get install -y php \
                        imagemagick \
                        gifsicle \
                        nodejs \
-                       npm
+                       npm \
+                       curl
 
 RUN pip3 install rembg gdown
 
