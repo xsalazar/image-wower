@@ -17,6 +17,7 @@ server.get("/", (req, res) => {
 });
 
 // Wowify Endpoint
+server.options("/", cors({ origin: "https://wowemoji.dev" }));
 server.put("/", cors({ origin: "https://wowemoji.dev" }), async (req, res) => {
   if (!req.body) {
     return;
