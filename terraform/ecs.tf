@@ -70,7 +70,7 @@ resource "template_dir" "task_definition" {
   }
 }
 
-resource "aws_cloudwatch_log_group" "instance" {
+resource "aws_cloudwatch_log_group" "ecs_instance" {
   name              = "/aws/ecs/${local.ecs_service_name}"
   retention_in_days = 30
 }
