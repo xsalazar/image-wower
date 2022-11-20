@@ -9,8 +9,10 @@ resource "aws_lb" "instance" {
 
 resource "aws_lb_listener" "instance" {
   load_balancer_arn = aws_lb.instance.arn
-  port              = 80
-  protocol          = "HTTP"
+  port              = 443
+  protocol          = "HTTPS"
+  certificate_arn   = data.aws_acm_certificate.instance.arn
+
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.instance.arn
@@ -31,4 +33,8 @@ resource "aws_lb_target_group" "instance" {
     protocol          = "HTTP"
     path              = "/"
   }
+}
+
+data "aws_acm_certificate" "instance" {
+  domain = "wowemoji.dev"
 }
