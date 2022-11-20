@@ -8,7 +8,7 @@ const port = 8400;
 
 const server = express();
 
-server.use(express.json());
+server.use(express.raw({ limit: "50mb", type: "image/*" }));
 
 // Health Check
 server.get("/", (req, res) => {
@@ -16,21 +16,17 @@ server.get("/", (req, res) => {
 });
 
 // Wowify Endpoint
-server.post("/", async (req, res) => {
-  console.log(JSON.stringify(req.body));
-
+server.put("/", async (req, res) => {
   if (!req.body) {
     return;
   }
-
-  const data = req.body.body;
 
   try {
     console.log("Removing background");
 
     const inputPath = `/tmp/${uuidv4()}.png`;
     const removedBgImagePath = `/tmp/${uuidv4()}.png`;
-    await sharp(Buffer.from(data, "base64"))
+    await sharp(req.body)
       .resize({
         width: 500,
         height: 500,
@@ -130,17 +126,11 @@ server.post("/", async (req, res) => {
         wowifiedSmall: smallSize,
       })
     );
-
-    // return {
-    //   cookies: [],
-    //   isBase64Encoded: false,
-    //   statusCode: 200,
-    //   headers: { "content-type": "application/json" },
-    //   body: ,
-    // };
   } catch (e) {
     console.log(e);
   }
+
+  res.sendStatus(500);
 });
 
 server.listen(port, () => {
