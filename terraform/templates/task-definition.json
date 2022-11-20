@@ -1,0 +1,36 @@
+{
+  "family": "image-wower-task-definition-family",
+  "requiresCompatibilities": ["FARGATE"],
+  "executionRoleArn": "${execution_role_arn}",
+  "networkMode": "awsvpc",
+  "cpu": "256",
+  "memory": "512",
+  "containerDefinitions": [
+    {
+      "name": "image-wower-container-def",
+      "image": "",
+      "essential": true,
+      "portMappings": [
+        {
+          "hostPort": 8400,
+          "protocol": "tcp",
+          "containerPort": 8400
+        }
+      ],
+      "healthCheck": {
+        "retries": 3,
+        "command": ["CMD-SHELL", "curl -f localhost:8400/ || exit 1"],
+        "timeout": 5,
+        "interval": 5
+      },
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "${awslogs_group}",
+          "awslogs-region": "${region}",
+          "awslogs-stream-prefix": "${awslogs_stream_prefix}"
+        }
+      }
+    }
+  ]
+}
