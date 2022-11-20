@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.18.2",
     "sharp": "^0.30.7",
     "uuid": "^9.0.0"

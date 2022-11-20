@@ -3,6 +3,7 @@ const fs = require("fs");
 const { execSync } = require("child_process");
 const { v4: uuidv4 } = require("uuid");
 const sharp = require("sharp");
+var cors = require("cors");
 
 const port = 8400;
 
@@ -16,7 +17,7 @@ server.get("/", (req, res) => {
 });
 
 // Wowify Endpoint
-server.put("/", async (req, res) => {
+server.put("/", cors({ origin: "https://wowemoji.dev" }), async (req, res) => {
   if (!req.body) {
     return;
   }
