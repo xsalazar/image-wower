@@ -74,7 +74,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ./terraform/rendered/task-definition.json
-          container-name: container-definition
+          container-name: image-wower-container-def
           image: ${{ env.IMAGE_URI }}
 
       - name: Deploy Amazon ECS task definition 🚀
