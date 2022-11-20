@@ -1,21 +1,36 @@
-const sharp = require("sharp");
-const { v4: uuidv4 } = require("uuid");
-const { execSync } = require("child_process");
+const express = require("express");
 const fs = require("fs");
+const { execSync } = require("child_process");
+const { v4: uuidv4 } = require("uuid");
+const sharp = require("sharp");
 
-exports.handler = async (event, context) => {
-  console.log(JSON.stringify(event));
+const port = 8400;
 
-  if (!event.body) {
+const server = express();
+
+server.use(express.json());
+
+// Health Check
+server.get("/", (req, res) => {
+  res.sendStatus(200);
+});
+
+// Wowify Endpoint
+server.post("/", async (req, res) => {
+  console.log(JSON.stringify(req.body));
+
+  if (!req.body) {
     return;
   }
+
+  const data = req.body.body;
 
   try {
     console.log("Removing background");
 
     const inputPath = `/tmp/${uuidv4()}.png`;
     const removedBgImagePath = `/tmp/${uuidv4()}.png`;
-    await sharp(Buffer.from(event.body, "base64"))
+    await sharp(Buffer.from(data, "base64"))
       .resize({
         width: 500,
         height: 500,
@@ -99,33 +114,35 @@ exports.handler = async (event, context) => {
     ).toString("base64");
 
     console.log("Cleaning up");
-    fs.rmSync(inputPath);
-    fs.rmSync(removedBgImagePath);
-    fs.rmSync(wowifiedOriginalSizePath);
-    fs.rmSync(wowifiedCompressedOriginalSizePath);
-    fs.rmSync(wowifiedSmallSizePath);
-    fs.rmSync(wowifiedCompressedSmallSizePath);
+    fs.unlinkSync(inputPath);
+    fs.unlinkSync(removedBgImagePath);
+    fs.unlinkSync(wowifiedOriginalSizePath);
+    fs.unlinkSync(wowifiedCompressedOriginalSizePath);
+    fs.unlinkSync(wowifiedSmallSizePath);
+    fs.unlinkSync(wowifiedCompressedSmallSizePath);
 
     console.log("Returning data");
-    return {
-      cookies: [],
-      isBase64Encoded: false,
-      statusCode: 200,
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
+
+    res.setHeader("content-type", "application/json");
+    res.end(
+      JSON.stringify({
         wowifiedOriginal: originalSize,
         wowifiedSmall: smallSize,
-      }),
-    };
-  } catch (e) {
-    console.log(JSON.stringify(e));
+      })
+    );
 
-    return {
-      cookies: [],
-      isBase64Encoded: false,
-      statusCode: 400,
-      headers: {},
-      body: "",
-    };
+    // return {
+    //   cookies: [],
+    //   isBase64Encoded: false,
+    //   statusCode: 200,
+    //   headers: { "content-type": "application/json" },
+    //   body: ,
+    // };
+  } catch (e) {
+    console.log(e);
   }
-};
+});
+
+server.listen(port, () => {
+  console.log(`Server is running`);
+});
