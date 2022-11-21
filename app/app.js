@@ -126,7 +126,7 @@ server.put(
       console.log("Returning data");
 
       res.setHeader("content-type", "application/json");
-      res.end(
+      res.send(
         JSON.stringify({
           wowifiedOriginal: originalSize,
           wowifiedSmall: smallSize,
