@@ -29,8 +29,8 @@ resource "aws_lb_target_group" "instance" {
   deregistration_delay = 30 // seconds
 
   health_check {
-    interval          = 5 // seconds
-    timeout           = 2 // seconds
+    interval          = 30 // seconds
+    timeout           = 5  // seconds
     healthy_threshold = 2
     protocol          = "HTTP"
     path              = "/"
