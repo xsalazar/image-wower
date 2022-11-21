@@ -46,8 +46,8 @@ resource "aws_ecs_task_definition" "instance" {
   family                   = "image-wower-task-definition-family"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = 256
-  memory                   = 512
+  cpu                      = 2048
+  memory                   = 4096
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
   container_definitions = jsonencode([{
     name  = "image-wower-container-def"
