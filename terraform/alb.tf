@@ -36,5 +36,5 @@ resource "aws_lb_target_group" "instance" {
 }
 
 data "aws_acm_certificate" "instance" {
-  domain = "wowemoji.dev"
+  domain = "*.wowemoji.dev"
 }
