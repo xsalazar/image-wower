@@ -1,10 +1,10 @@
 # 🌈 Image Wower
 
-This repository holds both the Terraform infrastructure as well as the simple Javascript application that runs inside the AWS Lambda function.
+This repository holds both the Terraform infrastructure as well as the simple Javascript application that runs inside the ECS Cluster, managed via Fargate.
 
 This application code is an "image wowing" service that takes an input image, removes the background, and overlays it on top of a colorful gif. This application leverages the [`sharp`](https://sharp.pixelplumbing.com/) library for quick, high-quality image manipulation, as well as [`imagemagick`](https://imagemagick.org/) for compositing and optimizing the output gifs.
 
-The infrastructure supporting this backend application is a simple public API Gateway that forwards valid requests to the Lambda function.
+The infrastructure supporting this backend application is a simple Application Load Balancer that forwards valid requests to the ECS Cluster.
 
 The backend application is used to support the website [https://wowemoji.dev](https://wowemoji.dev) for quick and reliable wowifications.
 
