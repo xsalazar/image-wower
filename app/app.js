@@ -59,14 +59,11 @@ server.put(
         "26vUyWzmjBIlNJvRC",
         "h7dhRBp5YXZqQ0mr3f",
         "koyjGfQHIZQKk",
-        "PGFzJs26BscwZybBLI",
-        "dtVbhQZHcsYbbCoe1y",
         "kkoRgXbTCPY3K",
         "rXNES6I8A7hEcq2uy1",
         "SKga1r0b9l6ep2khVQ",
         "bXR6c79iS8L4qa8UOx",
         "PbfVmhMI9SvaKcUOsb",
-        "oBhERi7jGiCnnYHLGf",
         "NjvLuSaJXKmjz0UDcf",
         "xThuW2fbatiCsyY3zW",
         "3o6Ztb45EYezY9x9gQ",
@@ -74,6 +71,17 @@ server.put(
         "xUPGcknoZZseQLFvws",
         "SYrMAmJZT4YcU",
         "xULW8GTX7rLWv8iQ4E",
+        "3ohzdOFQWcCZA8dRT2",
+        "l0MYMranKNhMUFveE",
+        "l378oRMuApI3a35Cg",
+        "3o7TKVA3gcjiKcFuV2",
+        "3oEduJXGwLsIe1RRPG",
+        "3og0IGjLXRttYbbtcc",
+        "n8k3O3KWXbPrPfsm7s",
+        "evlvEhB86RQidkiVBO",
+        "3oFzmiu86mdcjOsjOU",
+        "2bXyklhc7qQv0dTVXr",
+        "26xBs1E58r3ZHYvgQ",
       ];
 
       const gifId = gifs[Math.floor(Math.random() * gifs.length)];
@@ -87,19 +95,9 @@ server.put(
         `convert ${gifPath} null: ${removedBgImagePath} -gravity center -layers composite -fuzz 5% -layers optimize ${wowifiedOriginalSizePath}`
       );
 
-      const wowifiedCompressedOriginalSizePath = `/tmp/${uuidv4()}.gif`;
-      execSync(
-        `gifsicle -O3 --lossy=80 ${wowifiedOriginalSizePath} -o ${wowifiedCompressedOriginalSizePath}`
-      );
-
-      const wowifiedSmallSizePath = `/tmp/${uuidv4()}.gif`;
-      execSync(
-        `convert ${wowifiedCompressedOriginalSizePath} -resize 64x64 -layers optimize ${wowifiedSmallSizePath}`
-      );
-
       const wowifiedCompressedSmallSizePath = `/tmp/${uuidv4()}`;
       execSync(
-        `gifsicle -O3 --lossy=80 ${wowifiedSmallSizePath} -o ${wowifiedCompressedSmallSizePath}`
+        `gifsicle -O3 --lossy=85 --resize=64x64 ${wowifiedOriginalSizePath} -o ${wowifiedCompressedSmallSizePath}`
       );
 
       // Generate original and small size data
@@ -119,8 +117,6 @@ server.put(
       fs.unlinkSync(inputPath);
       fs.unlinkSync(removedBgImagePath);
       fs.unlinkSync(wowifiedOriginalSizePath);
-      fs.unlinkSync(wowifiedCompressedOriginalSizePath);
-      fs.unlinkSync(wowifiedSmallSizePath);
       fs.unlinkSync(wowifiedCompressedSmallSizePath);
 
       console.log("Returning data");
