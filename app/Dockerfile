@@ -10,10 +10,12 @@ RUN apt-get install -y php \
                        openssl \
                        imagemagick \
                        gifsicle \
-                       nodejs \
-                       npm \
                        curl
 
+# Install node 16
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && apt-get install -y nodejs
+
+# Install rembg
 RUN pip3 install rembg gdown
 
 # Make directory for u2net model, set that as environment variable, and download model
