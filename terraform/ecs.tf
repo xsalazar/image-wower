@@ -46,16 +46,23 @@ resource "aws_ecs_task_definition" "instance" {
   family                   = "image-wower-task-definition-family"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = 2048
-  memory                   = 4096
+  cpu                      = 1024
+  memory                   = 2048
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
   container_definitions = jsonencode([{
     name  = "image-wower-container-def"
-    image = "368081326042.dkr.ecr.us-west-2.amazonaws.com/image-wower-ecr-repo:bb67b8b161f9e154ef27a2bd145dde1a0fa1d231"
+    image = "foo:bar"
     portMappings = [{
       containerPort = 8400
     }]
   }])
+
+  // Container definition will be rendered in CI/CD pipeline via resources below
+  lifecycle {
+    ignore_changes = [
+      container_definitions
+    ]
+  }
 }
 
 resource "template_dir" "task_definition" {
