@@ -10,6 +10,7 @@ RUN npm install
 
 # Download rembg and model
 RUN yum -y install wget
+RUN mkdir ${LAMBDA_TASK_ROOT}/libs/u2net/
 RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net_human_seg.onnx -O ${LAMBDA_TASK_ROOT}/libs/u2net/u2net_human_seg.onnx
 
 # Make environment variable for u2net model home directory
