@@ -23,6 +23,7 @@ COPY app.js package.json ${FUNCTION_DIR}/
 COPY libs ${FUNCTION_DIR}/libs
 
 # Download rembg
+RUN mkdir ${FUNCTION_DIR}/libs/u2net/
 RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net_human_seg.onnx -O ${FUNCTION_DIR}/libs/u2net/u2net_human_seg.onnx
 
 # Install packages
