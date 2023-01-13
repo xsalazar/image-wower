@@ -19,15 +19,15 @@ ARG FUNCTION_DIR
 RUN mkdir -p ${FUNCTION_DIR}
 
 # Copy function code
-COPY app.js package.json ${FUNCTION_DIR}/
-COPY libs ${FUNCTION_DIR}/libs
+COPY app.js package.json ${FUNCTION_DIR}/app/
+COPY libs ${FUNCTION_DIR}/app/libs
 
 # Download rembg
-RUN mkdir ${FUNCTION_DIR}/libs/u2net/
-RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net_human_seg.onnx -O ${FUNCTION_DIR}/libs/u2net/u2net_human_seg.onnx
+RUN mkdir ${FUNCTION_DIR}/app/libs/u2net/
+RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net_human_seg.onnx -O ${FUNCTION_DIR}/app/libs/u2net/u2net_human_seg.onnx
 
 # Install packages
-WORKDIR ${FUNCTION_DIR}
+WORKDIR ${FUNCTION_DIR}/app
 RUN npm install
 
 # Install the runtime interface client
@@ -43,7 +43,7 @@ ARG FUNCTION_DIR
 WORKDIR ${FUNCTION_DIR}
 
 # Make environment variable for u2net model home directory
-ENV U2NET_HOME=${LAMBDA_TASK_ROOT}/libs/u2net
+ENV U2NET_HOME=${LAMBDA_TASK_ROOT}/app/libs/u2net
 ENV HOME=/tmp
 
 # Copy in the build image dependencies
