@@ -1,7 +1,7 @@
 FROM public.ecr.aws/lambda/nodejs:18
 
 # Fix up environment for base image
-RUN yum -y install xz wget
+RUN yum -y install wget
 ENV NUMBA_CACHE_DIR=/tmp
 
 # Copy function code
@@ -23,7 +23,7 @@ ENV U2NET_HOME=${LAMBDA_TASK_ROOT}/libs/u2net
 RUN mkdir ${LAMBDA_TASK_ROOT}/libs/python/
 WORKDIR ${LAMBDA_TASK_ROOT}/libs/python/
 RUN yum -y groupinstall "Development Tools"
-RUN yum -y install openssl-devel bzip2-devel libffi-devel
+RUN yum -y install openssl-devel bzip2-devel libffi-devel xz xz-devel lzma lzma-devel
 RUN wget https://www.python.org/ftp/python/3.9.10/Python-3.9.10.tgz -O ./Python-3.9.10.tgz
 RUN tar xvf ./Python-3.9.10.tgz
 WORKDIR ${LAMBDA_TASK_ROOT}/libs/python/Python-3.9.10
