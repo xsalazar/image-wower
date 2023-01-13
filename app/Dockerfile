@@ -1,5 +1,9 @@
 FROM public.ecr.aws/lambda/nodejs:18
 
+# Fix up environment for base image
+RUN yum -y install xz wget
+ENV NUMBA_CACHE_DIR=/tmp
+
 # Copy function code
 COPY app.js package.json ${LAMBDA_TASK_ROOT}/
 COPY libs ${LAMBDA_TASK_ROOT}/libs
@@ -9,7 +13,6 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 RUN npm install
 
 # Download rembg and model
-RUN yum -y install wget
 RUN mkdir ${LAMBDA_TASK_ROOT}/libs/u2net/
 RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net_human_seg.onnx -O ${LAMBDA_TASK_ROOT}/libs/u2net/u2net_human_seg.onnx
 
@@ -27,7 +30,5 @@ WORKDIR ${LAMBDA_TASK_ROOT}/libs/python/Python-3.9.10
 RUN ./configure --enable-optimizations
 RUN make altinstall
 RUN pip3.9 install rembg
-
-ENV NUMBA_CACHE_DIR=/tmp
 
 CMD [ "app.handler" ]
