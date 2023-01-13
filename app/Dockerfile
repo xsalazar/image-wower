@@ -26,6 +26,6 @@ RUN tar xvf ./Python-3.9.10.tgz
 WORKDIR ${LAMBDA_TASK_ROOT}/libs/python/Python-3.9.10
 RUN ./configure --enable-optimizations
 RUN make altinstall
-RUN pip3.9 install rembg --target "${LAMBDA_TASK_ROOT}"
+RUN pip3.9 install rembg
 
 CMD [ "app.handler" ]
