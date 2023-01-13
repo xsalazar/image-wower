@@ -28,4 +28,6 @@ RUN ./configure --enable-optimizations
 RUN make altinstall
 RUN pip3.9 install rembg
 
+ENV NUMBA_CACHE_DIR=/tmp
+
 CMD [ "app.handler" ]
