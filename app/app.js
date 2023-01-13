@@ -17,7 +17,7 @@ exports.handler = async (event, context) => {
     const removedBgImagePath = `/tmp/${uuidv4()}.png`;
 
     // Load file, normalize size, and save
-    await sharp(req.file.buffer)
+    await sharp(Buffer.from(event.body, "base64"))
       .resize({
         width: 500,
         height: 500,
