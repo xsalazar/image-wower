@@ -13,11 +13,11 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 RUN npm install
 
 # Download rembg and model
-RUN mkdir -p ${LAMBDA_TASK_ROOT}/libs/u2net
-RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net_human_seg.onnx -P ${LAMBDA_TASK_ROOT}/libs/u2net
+RUN mkdir -p /tmp/libs/u2net
+RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net_human_seg.onnx -P /tmp/libs/u2net
 
 # Make environment variable for u2net model home directory
-ENV U2NET_HOME=${LAMBDA_TASK_ROOT}/libs/u2net
+ENV U2NET_HOME=/tmp/libs/u2net
 
 # Install Python 3.9 and necessary packages
 RUN mkdir -p ${LAMBDA_TASK_ROOT}/libs/python/
