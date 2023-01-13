@@ -35,9 +35,8 @@ jobs:
         run: terraform init -upgrade
         working-directory: ./terraform
 
-      - name: Generate ECS Task Definition 📝
-        id: apply-partial
-        run: terraform apply -auto-approve -target=template_dir.task_definition
+      - name: Save Lambda function name to Environment Variables 💾
+        run: echo "LAMBDA_FUNCTION_NAME=$(terraform output -raw lambda_function)" >> $GITHUB_ENV
         working-directory: ./terraform
 
       - name: Save ECR name to Environment Variables 🛟
@@ -47,11 +46,7 @@ jobs:
       - name: Setup Node 🏗
         uses: actions/setup-node@v3
         with:
-          node-version: "16"
-
-      - name: Install packages 📀
-        run: npm ci
-        working-directory: ./app
+          node-version: "18"
 
       - name: Login to Amazon ECR 🧑‍💻
         id: login-ecr
@@ -69,18 +64,8 @@ jobs:
           echo "IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
         working-directory: ./app
 
-      - name: Fill in the new image ID in the Amazon ECS task definition ✒
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ./terraform/rendered/task-definition.json
-          container-name: image-wower-container-def
-          image: ${{ env.IMAGE_URI }}
-
-      - name: Deploy Amazon ECS task definition 🚀
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: image-wower-service
-          cluster: image-wower-cluster
-          wait-for-service-stability: true
+      - name: Deploy Lambda Function 🚀
+        env:
+          LAMBDA_FUNCTION_NAME: ${{ env.LAMBDA_FUNCTION_NAME }}
+        run: aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file fileb://lambda.zip
+        working-directory: ./app
