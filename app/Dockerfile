@@ -44,6 +44,7 @@ WORKDIR ${FUNCTION_DIR}
 
 # Make environment variable for u2net model home directory
 ENV U2NET_HOME=${LAMBDA_TASK_ROOT}/libs/u2net
+ENV HOME=/tmp
 
 # Copy in the build image dependencies
 COPY --from=build-image ${FUNCTION_DIR} ${FUNCTION_DIR}
