@@ -1,56 +1,30 @@
-# Define function directory
-ARG FUNCTION_DIR="/function"
-
-FROM nikolaik/python-nodejs:python3.9-nodejs18 as build-image
-
-# Install aws-lambda-cpp build dependencies
-RUN apt-get update && \
-    apt-get install -y \
-    g++ \
-    make \
-    cmake \
-    unzip \
-    libcurl4-openssl-dev
-
-# Include global arg in this stage of the build
-ARG FUNCTION_DIR
-
-# Create function directory
-RUN mkdir -p ${FUNCTION_DIR}
+FROM public.ecr.aws/lambda/nodejs:18
 
 # Copy function code
-COPY app.js package.json ${FUNCTION_DIR}/app/
-COPY libs ${FUNCTION_DIR}/app/libs
-
-# Download rembg
-RUN mkdir ${FUNCTION_DIR}/app/libs/u2net/
-RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net_human_seg.onnx -O ${FUNCTION_DIR}/app/libs/u2net/u2net_human_seg.onnx
+COPY app.js package.json ${LAMBDA_TASK_ROOT}/
+COPY libs ${LAMBDA_TASK_ROOT}/libs
 
 # Install packages
-WORKDIR ${FUNCTION_DIR}/app
+WORKDIR ${LAMBDA_TASK_ROOT}
 RUN npm install
 
-# Install the runtime interface client
-RUN npm install aws-lambda-ric
-
-# Multi-stage build: grab a fresh copy of the base image
-FROM nikolaik/python-nodejs:python3.9-nodejs18
-
-# Include global arg in this stage of the build
-ARG FUNCTION_DIR
-
-# Set working directory to function root directory
-WORKDIR ${FUNCTION_DIR}
+# Download rembg and model
+RUN yum -y install wget
+RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net_human_seg.onnx -O ${LAMBDA_TASK_ROOT}/libs/u2net/u2net_human_seg.onnx
 
 # Make environment variable for u2net model home directory
-ENV U2NET_HOME=${LAMBDA_TASK_ROOT}/app/libs/u2net
-ENV HOME=/tmp
+ENV U2NET_HOME=${LAMBDA_TASK_ROOT}/libs/u2net
 
-# Copy in the build image dependencies
-COPY --from=build-image ${FUNCTION_DIR} ${FUNCTION_DIR}
+# Install Python 3.9 and necessary packages
+RUN mkdir ${LAMBDA_TASK_ROOT}/libs/python/
+WORKDIR ${LAMBDA_TASK_ROOT}/libs/python/
+RUN yum -y groupinstall "Development Tools"
+RUN yum -y install openssl-devel bzip2-devel libffi-devel
+RUN wget https://www.python.org/ftp/python/3.9.10/Python-3.9.10.tgz -O ./Python-3.9.10.tgz
+RUN tar xvf ./Python-3.9.10.tgz
+WORKDIR ${LAMBDA_TASK_ROOT}/libs/python/Python-3.9.10
+RUN ./configure --enable-optimizations
+RUN make altinstall
+RUN pip3.9 install rembg --target "${LAMBDA_TASK_ROOT}"
 
-# Install Python packages
-RUN  pip3 install rembg --target "${LAMBDA_TASK_ROOT}"
-
-ENTRYPOINT ["npx", "aws-lambda-ric"]
 CMD [ "app.handler" ]
