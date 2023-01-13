@@ -22,11 +22,6 @@ provider "aws" {
   }
 }
 
-resource "template_dir" "task_definition" {
-  source_dir      = path.module
-  destination_dir = path.module
-}
-
 output "ecr_repository_name" {
   value = aws_ecr_repository.instance.name
 }

@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "instance" {
   function_name = "image-wower"
-  image_uri     = "${aws_ecr_repository.instance.arn}:15e8a215e8da9cf81d61b477a6775ad9d24a7515" // This won't work right now, but we need a placeholder image to deploy
+  image_uri     = "368081326042.dkr.ecr.us-west-2.amazonaws.com/image-wower-ecr-repo:15e8a215e8da9cf81d61b477a6775ad9d24a7515" // This won't work right now, but we need a placeholder image to deploy
   role          = aws_iam_role.instance.arn
   timeout       = 30    // seconds -- matches API Gateway integration timeout limit
   memory_size   = 10240 // MB
