@@ -51,5 +51,5 @@ COPY --from=build-image ${FUNCTION_DIR} ${FUNCTION_DIR}
 # Install Python packages
 RUN  pip3 install rembg --target "${LAMBDA_TASK_ROOT}"
 
-ENTRYPOINT ["/usr/local/bin/npx", "aws-lambda-ric"]
+ENTRYPOINT ["npx", "aws-lambda-ric"]
 CMD [ "app.handler" ]
