@@ -67,5 +67,5 @@ jobs:
       - name: Deploy Lambda Function 🚀
         env:
           LAMBDA_FUNCTION_NAME: ${{ env.LAMBDA_FUNCTION_NAME }}
-        run: aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file fileb://lambda.zip
+        run: aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --image-uri $IMAGE_URI
         working-directory: ./app
