@@ -11,6 +11,13 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    if (!fs.existsSync(`/tmp/libs/u2net`)) {
+      console.log("Copying rembg library to /tmp directory");
+      execSync(
+        `mkdir -p /tmp/libs/u2net && cp ./libs/u2net/u2net_human_seg.onnx /tmp/libs/u2net/u2net_human_seg.onnx`
+      );
+    }
+
     console.log("Removing background");
 
     const inputPath = `/tmp/${uuidv4()}.png`;
@@ -120,8 +127,6 @@ exports.handler = async (event, context) => {
     fs.unlinkSync(wowifiedSmallSizePath);
 
     console.log("Returning data");
-
-    res.setHeader("content-type", "application/json");
 
     return {
       cookies: [],

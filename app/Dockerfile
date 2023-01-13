@@ -13,10 +13,13 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 RUN npm install
 
 # Download rembg and model
-RUN mkdir -p /tmp/libs/u2net
-RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net_human_seg.onnx -P /tmp/libs/u2net
+RUN mkdir -p ${LAMBDA_TASK_ROOT}/libs/u2net
+RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net_human_seg.onnx -P ${LAMBDA_TASK_ROOT}/libs/u2net
 
 # Make environment variable for u2net model home directory
+# The model is downloaded "locally" above, but moved to the /tmp directory when the Lambda boots up
+# This is necessary because dependencies need "scratch" space for files, and /tmp is the only writable directory
+# But you can't persist permanent files to /tmp, so we copy it over when the Lambda needs it
 ENV U2NET_HOME=/tmp/libs/u2net
 
 # Install Python 3.9 and necessary packages
