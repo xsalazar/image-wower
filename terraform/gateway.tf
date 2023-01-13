@@ -13,7 +13,7 @@ resource "aws_apigatewayv2_domain_name" "example" {
   domain_name = "backend.wowemoji.dev"
 
   domain_name_configuration {
-    certificate_arn = aws_acm_certificate.instance.arn
+    certificate_arn = data.aws_acm_certificate.instance.arn
     endpoint_type   = "REGIONAL"
     security_policy = "TLS_1_2"
   }
