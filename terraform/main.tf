@@ -25,3 +25,7 @@ provider "aws" {
 output "ecr_repository_name" {
   value = aws_ecr_repository.instance.name
 }
+
+output "lambda_function" {
+  value = aws_lambda_function.instance.function_name
+}
