@@ -19,7 +19,7 @@ ARG FUNCTION_DIR
 RUN mkdir -p ${FUNCTION_DIR}
 
 # Copy function code
-COPY app.js package.json ${FUNCTION_DIR}
+COPY app.js package.json ${FUNCTION_DIR}/
 COPY libs ${FUNCTION_DIR}/libs
 
 # Download rembg
