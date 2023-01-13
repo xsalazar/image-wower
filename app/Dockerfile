@@ -31,4 +31,6 @@ RUN ./configure --enable-optimizations
 RUN make altinstall
 RUN pip3.9 install rembg
 
+WORKDIR ${LAMBDA_TASK_ROOT}
+
 CMD [ "app.handler" ]
