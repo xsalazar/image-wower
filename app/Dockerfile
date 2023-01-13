@@ -14,7 +14,7 @@ RUN npm install
 
 # Download rembg and model
 RUN mkdir -p ${LAMBDA_TASK_ROOT}/libs/u2net
-RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net_human_seg.onnx -O ${LAMBDA_TASK_ROOT}/libs/u2net/u2net_human_seg.onnx
+RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net_human_seg.onnx -P ${LAMBDA_TASK_ROOT}/libs/u2net
 
 # Make environment variable for u2net model home directory
 ENV U2NET_HOME=${LAMBDA_TASK_ROOT}/libs/u2net
@@ -24,7 +24,7 @@ RUN mkdir -p ${LAMBDA_TASK_ROOT}/libs/python/
 WORKDIR ${LAMBDA_TASK_ROOT}/libs/python/
 RUN yum -y groupinstall "Development Tools"
 RUN yum -y install openssl-devel bzip2-devel libffi-devel xz xz-devel lzma lzma-devel
-RUN wget https://www.python.org/ftp/python/3.9.10/Python-3.9.10.tgz -O ./Python-3.9.10.tgz
+RUN wget https://www.python.org/ftp/python/3.9.10/Python-3.9.10.tgz
 RUN tar xvf ./Python-3.9.10.tgz
 WORKDIR ${LAMBDA_TASK_ROOT}/libs/python/Python-3.9.10
 RUN ./configure --enable-optimizations
