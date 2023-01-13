@@ -1,6 +1,7 @@
 resource "aws_apigatewayv2_api" "instance" {
-  name          = "image-wower-api-gateway"
-  protocol_type = "HTTP"
+  name                         = "image-wower-api-gateway"
+  protocol_type                = "HTTP"
+  disable_execute_api_endpoint = true
 
   cors_configuration {
     allow_origins = ["https://wowemoji.dev"]
@@ -9,7 +10,13 @@ resource "aws_apigatewayv2_api" "instance" {
   }
 }
 
-resource "aws_apigatewayv2_domain_name" "example" {
+resource "aws_apigatewayv2_api_mapping" "example" {
+  api_id      = aws_apigatewayv2_api.instance.id
+  domain_name = aws_apigatewayv2_domain_name.instance.id
+  stage       = "$default"
+}
+
+resource "aws_apigatewayv2_domain_name" "instance" {
   domain_name = "backend.wowemoji.dev"
 
   domain_name_configuration {
