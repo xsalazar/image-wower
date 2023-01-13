@@ -73,7 +73,7 @@ exports.handler = async (event, context) => {
     ];
 
     const gifId = gifs[Math.floor(Math.random() * gifs.length)];
-    const gifPath = `/tmp/libs/gifs/${gifId}.webp`;
+    const gifPath = `./libs/gifs/${gifId}.webp`;
 
     console.log("Wowifying");
 
