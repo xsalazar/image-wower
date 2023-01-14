@@ -2,6 +2,7 @@ const fs = require("fs");
 const { execSync } = require("child_process");
 const { v4: uuidv4 } = require("uuid");
 const sharp = require("sharp");
+const AWS = require("aws-sdk");
 
 exports.handler = async (event, context) => {
   console.log(JSON.stringify(event));
