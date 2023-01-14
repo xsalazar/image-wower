@@ -202,7 +202,9 @@ exports.handler = async (event, context) => {
       await sqs
         .sendMessage({
           MessageBody: event.body,
-          MessageAttributes: { token: token },
+          MessageAttributes: {
+            token: { DataType: "String", StringValue: token },
+          },
           QueueUrl:
             "https://sqs.us-west-2.amazonaws.com/368081326042/wow-emoji-queue",
         })
