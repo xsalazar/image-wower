@@ -37,6 +37,15 @@ data "aws_iam_policy_document" "ecr_access_policy_document" {
     ]
     resources = ["${aws_ecr_repository.instance.arn}"]
   }
+
+  // For SQS access
+  statement {
+    effect = "Allow"
+    actions = [
+      "sqs:DeleteMessage", "sqs:GetQueueAttributes", "sqs:ReceiveMessage"
+    ]
+    resources = ["${aws_sqs_queue.instance.arn}"]
+  }
 }
 
 resource "aws_iam_role" "instance" {
