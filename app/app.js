@@ -77,7 +77,7 @@ exports.handler = async (event, context) => {
       const removedBgImagePath = `/tmp/${uuidv4()}.png`;
 
       // Load file, normalize size, and save
-      await sharp(Buffer.from(data.Body, "base64"))
+      await sharp(data.Body)
         .resize({
           width: 500,
           height: 500,
@@ -219,9 +219,8 @@ exports.handler = async (event, context) => {
         .putObject({
           Bucket: "image-wower-data",
           Key: `${token}-input`,
-          Body: event.body,
+          Body: Buffer.from(event.body, "base64"),
           ContentType: event.headers["content-type"],
-          ContentEncoding: "base64",
         })
         .promise();
 
