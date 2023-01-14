@@ -220,7 +220,8 @@ exports.handler = async (event, context) => {
           Bucket: "image-wower-data",
           Key: `${token}-input`,
           Body: event.body,
-          ContentType: "text/plain",
+          ContentType: event.headers["content-type"],
+          ContentEncoding: "base64",
         })
         .promise();
 
