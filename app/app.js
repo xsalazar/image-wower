@@ -27,7 +27,7 @@ exports.handler = async (event, context) => {
         isBase64Encoded: false,
         statusCode: 200,
         headers: { "content-type": "application/json" },
-        body: data.Body,
+        body: JSON.stringify(data.Body),
       };
     } catch (e) {
       return {
@@ -197,6 +197,8 @@ exports.handler = async (event, context) => {
     const token = uuidv4();
     try {
       // Send message to SQS with content to be processed and token
+      console.log(`Adding message to queue: ${token}`);
+
       await sqs
         .sendMessage({
           MessageBody: event.body,
@@ -214,6 +216,8 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({ token: token }),
       };
     } catch (e) {
+      console.log(JSON.stringify(e));
+
       return {
         cookies: [],
         isBase64Encoded: false,
