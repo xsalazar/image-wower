@@ -42,7 +42,7 @@ data "aws_iam_policy_document" "lambda_access_policy_document" {
   statement {
     effect = "Allow"
     actions = [
-      "sqs:DeleteMessage", "sqs:GetQueueAttributes", "sqs:ReceiveMessage"
+      "sqs:DeleteMessage", "sqs:GetQueueAttributes", "sqs:ReceiveMessage", "sqs:SendMessage"
     ]
     resources = ["${aws_sqs_queue.instance.arn}"]
   }
