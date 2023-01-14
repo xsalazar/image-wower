@@ -185,6 +185,7 @@ exports.handler = async (event, context) => {
         .putObject({
           Bucket: "image-wower-data",
           Key: token,
+          ContentType: "application/json",
           Body: JSON.stringify({
             wowifiedOriginal: originalSize,
             wowifiedSmall: smallSize,
@@ -219,6 +220,7 @@ exports.handler = async (event, context) => {
           Bucket: "image-wower-data",
           Key: `${token}-input`,
           Body: event.body,
+          ContentType: "text/plain",
         })
         .promise();
 
