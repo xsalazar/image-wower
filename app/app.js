@@ -22,6 +22,13 @@ exports.handler = async (event, context) => {
         .deleteObject({ Bucket: "image-wower-data", Key: token })
         .promise();
 
+      await s3
+        .deleteObject({
+          Bucket: "image-wower-data",
+          Key: `${token}-input`,
+        })
+        .promise();
+
       return {
         cookies: [],
         isBase64Encoded: false,
@@ -42,28 +49,35 @@ exports.handler = async (event, context) => {
 
   // Check if this was triggered by SQS
   else if (event.Records && event.Records.length > 0) {
+    const s3 = new AWS.S3();
+
     // Process each record, and save data to S3
     for (let i = 0; i < event.Records.length; i++) {
       const record = event.Records[i];
 
-      const { body, receiptHandle } = record;
-      const { token } = record.messageAttributes;
+      const { body: token, receiptHandle } = record;
 
       console.log(`Processing message: ${token}`);
 
+      // Load data from S3
+      const data = await s3
+        .getObject({ Bucket: "image-wower-data", Key: `${token}-input` })
+        .promise();
+
+      // Load model if it doesn't exist on this instance
       if (!fs.existsSync(`/tmp/libs/u2net`)) {
         console.log("Copying rembg library to /tmp directory");
         execSync(
           `mkdir -p /tmp/libs/u2net && cp ./libs/u2net/u2net_human_seg.onnx /tmp/libs/u2net/u2net_human_seg.onnx`
         );
       }
-      console.log("Removing background");
 
+      console.log("Removing background");
       const inputPath = `/tmp/${uuidv4()}.png`;
       const removedBgImagePath = `/tmp/${uuidv4()}.png`;
 
       // Load file, normalize size, and save
-      await sharp(Buffer.from(body, "base64"))
+      await sharp(Buffer.from(data.Body, "base64"))
         .resize({
           width: 500,
           height: 500,
@@ -166,7 +180,6 @@ exports.handler = async (event, context) => {
       fs.unlinkSync(wowifiedSmallSizePath);
 
       console.log("Saving data to S3");
-      const s3 = new AWS.S3();
 
       await s3
         .putObject({
@@ -194,17 +207,25 @@ exports.handler = async (event, context) => {
   // Otherwise, check for image data to submit to SQS and return token to poll with
   else if (event.body) {
     const sqs = new AWS.SQS();
+    const s3 = new AWS.S3();
     const token = uuidv4();
     try {
       // Send message to SQS with content to be processed and token
       console.log(`Adding message to queue: ${token}`);
 
+      // Add original data to S3
+      await s3
+        .putObject({
+          Bucket: "image-wower-data",
+          Key: `${token}-input`,
+          Body: event.body,
+        })
+        .promise();
+
+      // Put message on queue for processing
       await sqs
         .sendMessage({
-          MessageBody: event.body,
-          MessageAttributes: {
-            token: { DataType: "String", StringValue: token },
-          },
+          MessageBody: token,
           QueueUrl:
             "https://sqs.us-west-2.amazonaws.com/368081326042/wow-emoji-queue",
         })
