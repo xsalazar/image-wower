@@ -8,12 +8,16 @@ resource "aws_sqs_queue" "instance" {
   })
 }
 
+data "aws_sqs_queue" "instance_data" {
+  name = "wow-emoji-queue"
+}
+
 resource "aws_sqs_queue" "instance_deadletter" {
   name = "wow-emoji-queue-deadletter"
 
   redrive_allow_policy = jsonencode({
     redrivePermission = "byQueue",
-    sourceQueueArns   = [aws_sqs_queue.instance.arn]
+    sourceQueueArns   = [data.aws_sqs_queue.instance_data.arn]
   })
 }
 
