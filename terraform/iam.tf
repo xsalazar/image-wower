@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "assume_role_policy_document" {
   }
 }
 
-data "aws_iam_policy_document" "ecr_access_policy_document" {
+data "aws_iam_policy_document" "lambda_access_policy_document" {
   version = "2012-10-17"
 
   // From AWSLambdaVPCAccessExecutionRole
@@ -46,6 +46,13 @@ data "aws_iam_policy_document" "ecr_access_policy_document" {
     ]
     resources = ["${aws_sqs_queue.instance.arn}"]
   }
+
+  // For S3 access
+  statement {
+    effect    = "Allow"
+    actions   = ["s3:*"]
+    resources = ["${aws_s3_bucket.instance.arn}", "${aws_s3_bucket.instance.arn}/*"]
+  }
 }
 
 resource "aws_iam_role" "instance" {
@@ -55,7 +62,7 @@ resource "aws_iam_role" "instance" {
 
 resource "aws_iam_policy" "instance" {
   name   = "lambda-image-wower-iam-policy"
-  policy = data.aws_iam_policy_document.ecr_access_policy_document.json
+  policy = data.aws_iam_policy_document.lambda_access_policy_document.json
 }
 
 resource "aws_iam_role_policy_attachment" "instance" {
