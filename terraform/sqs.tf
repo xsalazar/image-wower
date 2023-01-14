@@ -31,3 +31,10 @@ resource "aws_sqs_queue_policy" "instance" {
     }
   POLICY
 }
+
+resource "aws_lambda_event_source_mapping" "instance" {
+  event_source_arn = aws_sqs_queue.instance.arn
+  enabled          = true
+  function_name    = aws_lambda_function.instance.function_name
+  batch_size       = 1
+}
