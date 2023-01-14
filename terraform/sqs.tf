@@ -16,7 +16,8 @@ resource "aws_sqs_queue_policy" "instance" {
           "Action": [
             "sqs:DeleteMessage",
             "sqs:SendMessage",
-            "sqs:GetQueueAttributes"
+            "sqs:GetQueueAttributes",
+            "sqs:ReceiveMessage"
           ],
           "Effect": "Allow",
           "Resource": "${aws_sqs_queue.instance.arn}",
