@@ -34,7 +34,7 @@ exports.handler = async (event, context) => {
         isBase64Encoded: false,
         statusCode: 200,
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(data.Body.toString("utf-8")),
+        body: JSON.parse(data.Body.toString("utf-8")),
       };
     } catch (e) {
       return {
