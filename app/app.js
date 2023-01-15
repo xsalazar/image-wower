@@ -34,7 +34,7 @@ exports.handler = async (event, context) => {
         isBase64Encoded: false,
         statusCode: 200,
         headers: { "content-type": "application/json" },
-        body: JSON.parse(data.Body.toString("utf-8")),
+        body: JSON.stringify(JSON.parse(data.Body.toJSON("utf-8"))), // Convert S3 object to string -> JSON object -> JSON string
       };
     } catch (e) {
       return {
