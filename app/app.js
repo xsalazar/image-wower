@@ -50,7 +50,7 @@ exports.handler = async (event, context) => {
       return {
         cookies: [],
         isBase64Encoded: false,
-        statusCode: 102, // Processing
+        statusCode: 404, // Processing
         headers: {},
         body: "",
       };
