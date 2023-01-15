@@ -10,7 +10,7 @@ resource "aws_apigatewayv2_api" "instance" {
   }
 }
 
-resource "aws_apigatewayv2_api_mapping" "example" {
+resource "aws_apigatewayv2_api_mapping" "instance" {
   api_id      = aws_apigatewayv2_api.instance.id
   domain_name = aws_apigatewayv2_domain_name.instance.id
   stage       = "$default"
@@ -37,9 +37,15 @@ resource "aws_apigatewayv2_integration" "instance" {
   payload_format_version = "2.0"
 }
 
-resource "aws_apigatewayv2_route" "instance" {
+resource "aws_apigatewayv2_route" "put_instance" {
   api_id    = aws_apigatewayv2_api.instance.id
   route_key = "PUT /"
+  target    = "integrations/${aws_apigatewayv2_integration.instance.id}"
+}
+
+resource "aws_apigatewayv2_route" "get_instance" {
+  api_id    = aws_apigatewayv2_api.instance.id
+  route_key = "GET /"
   target    = "integrations/${aws_apigatewayv2_integration.instance.id}"
 }
 
