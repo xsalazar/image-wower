@@ -5,7 +5,7 @@ resource "aws_apigatewayv2_api" "instance" {
 
   cors_configuration {
     allow_origins = ["https://wowemoji.dev"]
-    allow_methods = ["PUT"]
+    allow_methods = ["PUT", "GET"]
     allow_headers = ["*"]
   }
 }
