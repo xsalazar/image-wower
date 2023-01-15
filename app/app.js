@@ -17,7 +17,10 @@ exports.handler = async (event, context) => {
     const s3 = new AWS.S3();
 
     try {
-      // This will throw exception if not found
+      // Check if data has finished processing
+      await s3.headObject({ Bucket: "image-wower-data", Key: token }).promise();
+
+      // If call above doesn't fail, get data
       const data = await s3
         .getObject({ Bucket: "image-wower-data", Key: token })
         .promise();
