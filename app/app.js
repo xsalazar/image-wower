@@ -34,9 +34,11 @@ exports.handler = async (event, context) => {
         isBase64Encoded: false,
         statusCode: 200,
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(JSON.parse(data.Body.toJSON("utf-8"))), // Convert S3 object to string -> JSON object -> JSON string
+        body: data.Body.toString(),
       };
     } catch (e) {
+      console.log(JSON.stringify(e));
+
       return {
         cookies: [],
         isBase64Encoded: false,
