@@ -8,11 +8,16 @@ exports.handler = async (event, context) => {
   console.log(JSON.stringify(event));
 
   // Check S3 for result, return it, if found
-  if (event.queryStringParameters && event.queryStringParameters.wowToken) {
+  if (
+    event.queryStringParameters &&
+    event.queryStringParameters.wowToken &&
+    event.requestContext.http.method === "GET"
+  ) {
     const token = event.queryStringParameters.wowToken;
     const s3 = new AWS.S3();
 
     try {
+      // This will throw exception if not found
       const data = await s3
         .getObject({ Bucket: "image-wower-data", Key: token })
         .promise();
@@ -42,7 +47,7 @@ exports.handler = async (event, context) => {
       return {
         cookies: [],
         isBase64Encoded: false,
-        statusCode: 404,
+        statusCode: 102, // Processing
         headers: {},
         body: "",
       };
@@ -208,7 +213,7 @@ exports.handler = async (event, context) => {
   }
 
   // Otherwise, check for image data to submit to SQS and return token to poll with
-  else if (event.body) {
+  else if (event.body && event.requestContext.http.method === "PUT") {
     const sqs = new AWS.SQS();
     const s3 = new AWS.S3();
     const token = uuidv4();
