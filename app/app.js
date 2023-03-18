@@ -88,6 +88,7 @@ exports.handler = async (event, context) => {
 
       // Load file, normalize size, and save
       await sharp(data.Body)
+        .withMetadata({ orientation: 1 })
         .resize({
           width: 500,
           height: 500,
