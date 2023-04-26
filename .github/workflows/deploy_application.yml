@@ -43,6 +43,10 @@ jobs:
         run: echo "ECR_NAME=$(terraform output -raw ecr_repository_name)" >> $GITHUB_ENV
         working-directory: ./terraform
 
+      - name: Save S3 bucket name to Environment Variables 🛟
+        run: echo "BUCKET=$(terraform output -raw gifs_bucket)" >> $GITHUB_ENV
+        working-directory: ./terraform
+
       - name: Setup Node 🏗
         uses: actions/setup-node@v3
         with:
@@ -51,6 +55,12 @@ jobs:
       - name: Login to Amazon ECR 🧑‍💻
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Copy gifs to local directory ⤵️
+        env:
+          BUCKET: ${{ env.BUCKET}}
+        working-directory: ./app
+        run: aws s3 sync $BUCKET ./libs/gifs
 
       - name: Build, tag, and push image to Amazon ECR 🏷
         id: build-image

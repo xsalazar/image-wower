@@ -29,3 +29,7 @@ output "ecr_repository_name" {
 output "lambda_function" {
   value = aws_lambda_function.instance.function_name
 }
+
+output "gifs_bucket" {
+  value = "s3://${aws_s3_bucket.gifs.bucket}"
+}
