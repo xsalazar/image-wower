@@ -93,6 +93,7 @@ exports.handler = async (event, context) => {
           width: 500,
           height: 500,
         })
+        .png()
         .toFile(inputPath);
 
       // Remove background
@@ -129,7 +130,6 @@ exports.handler = async (event, context) => {
         "3ohzdZO0nAL1H2LdMA",
         "xUPGcknoZZseQLFvws",
         "SYrMAmJZT4YcU",
-        "xULW8GTX7rLWv8iQ4E",
         "3ohzdOFQWcCZA8dRT2",
         "l0MYMranKNhMUFveE",
         "l378oRMuApI3a35Cg",
@@ -141,17 +141,34 @@ exports.handler = async (event, context) => {
         "3oFzmiu86mdcjOsjOU",
         "2bXyklhc7qQv0dTVXr",
         "26xBs1E58r3ZHYvgQ",
+        "isqxY03RuhGxNbCPzY",
+        "3o7aD56B2QS5MyTGfe",
+        "MasbBp1KusW3JkdSXP",
+        "uBaCEhYJ1nW3mehKKr",
+        "NsQWLvDrT6LYd1jBGK",
+        "l378wcSfS7eXWQgla",
+        "l0CLUrZiblFUBMMrC",
+        "3otO6NFBIAFg2vPZuM",
+        "2uI6DhDIWY9iBT2sB8",
+        "3og0IQ29pE7zRwbh60",
+        "dJPYnoer6wo4HQw1jI",
+        "9V1F9JA4O8cCl1m42m",
+        "1AjFHhwg84p8IHF179",
+        "xUOxf8yMjHNCkojUE8",
+        "3oxHQGVPrFKfHJjdde",
+        "xT9IgKNauJJOCbT07m",
+        "xT9Igg1Kq1xmy7123m",
+        "3oKIP7rZqEbTWA2n60",
       ];
 
       const gifId = gifs[Math.floor(Math.random() * gifs.length)];
-      const gifPath = `./libs/gifs/${gifId}.webp`;
+      const largeGifPath = `./libs/gifs/${gifId}-500.webp`;
 
       console.log("Wowifying");
 
-      // Combine gif with result and save file to tmp directory
+      // Overlay 500-px image on top of gif
       const wowifiedOriginalSizePath = `/tmp/${uuidv4()}.webp`;
-
-      await sharp(gifPath, {
+      await sharp(largeGifPath, {
         animated: true,
       })
         .composite([
@@ -165,10 +182,11 @@ exports.handler = async (event, context) => {
         .webp()
         .toFile(wowifiedOriginalSizePath);
 
+      // Resize 500-px to 64-px version
       const wowifiedSmallSizePath = `/tmp/${uuidv4()}.webp`;
       await sharp(wowifiedOriginalSizePath, { animated: true })
         .resize({ width: 64, height: 64 })
-        .webp({ lossless: true })
+        .webp({ effort: 6 })
         .toFile(wowifiedSmallSizePath);
 
       // Generate original and small size data
