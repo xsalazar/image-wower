@@ -1,2 +1,3 @@
-helper.js
+helper/
 libs/u2net
+*.webp
