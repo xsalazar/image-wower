@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
-    "aws-sdk": "^2.1521.0",
+    "aws-sdk": "^2.1522.0",
     "sharp": "^0.33.1",
     "uuid": "^9.0.1"
   },
