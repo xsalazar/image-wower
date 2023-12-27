@@ -289,23 +289,25 @@ exports.handler = async (event, context) => {
     event.requestContext.http.method === "GET"
   ) {
     try {
-      const ret = { thumbnails: [] };
+      const ret = { thumbnails: {} };
 
       // Grab all the large, 500-px gif paths
       const gifs = fs
         .readdirSync(`./libs/gifs/`)
-        .filter((path) => path.includes("-500.webp"));
+        .filter((path) => path.includes("-500.webp"))
+        .sort();
 
       // Iterate over each item, fetch the gif, and save thumbnail to output
       for (var i = 0; i < gifs.length; i++) {
-        const gif = `./libs/gifs/${gifs[i]}`;
+        const gifPath = `./libs/gifs/${gifs[i]}`;
+        const gifName = gifs[i].split("-")[0];
         const frame = (
-          await sharp(gif, { pages: 1 })
+          await sharp(gifPath, { pages: 1 })
             .resize({ width: 64, height: 64 })
             .png()
             .toBuffer()
         ).toString("base64");
-        ret.thumbnails.push(frame);
+        ret.thumbnails[gifName] = frame;
       }
 
       return {
