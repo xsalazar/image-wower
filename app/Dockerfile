@@ -32,7 +32,7 @@ RUN tar xvf ./Python-3.9.10.tgz
 WORKDIR ${LAMBDA_TASK_ROOT}/libs/python/Python-3.9.10
 RUN ./configure --enable-optimizations
 RUN make altinstall
-RUN pip3.9 install rembg
+RUN pip3.9 install rembg==2.0.34
 
 WORKDIR ${LAMBDA_TASK_ROOT}
 
