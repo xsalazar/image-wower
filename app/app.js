@@ -281,4 +281,50 @@ exports.handler = async (event, context) => {
       };
     }
   }
+
+  // Check if we're requesting thumbnails
+  else if (
+    event.queryStringParameters &&
+    event.queryStringParameters.thumbnails &&
+    event.requestContext.http.method === "GET"
+  ) {
+    try {
+      const ret = { thumbnails: [] };
+
+      // Grab all the large, 500-px gif paths
+      const gifs = fs
+        .readdirSync(`./libs/gifs/`)
+        .filter((path) => path.includes("-500.webp"));
+
+      // Iterate over each item, fetch the gif, and save thumbnail to output
+      for (var i = 0; i < gifs.length; i++) {
+        const gif = `./libs/gifs/${gifs[i]}`;
+        const frame = (
+          await sharp(gif, { pages: 1 })
+            .resize({ width: 64, height: 64 })
+            .png()
+            .toBuffer()
+        ).toString("base64");
+        ret.thumbnails.push(frame);
+      }
+
+      return {
+        cookies: [],
+        isBase64Encoded: false,
+        statusCode: 200,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(ret),
+      };
+    } catch (e) {
+      console.log(JSON.stringify(e));
+
+      return {
+        cookies: [],
+        isBase64Encoded: false,
+        statusCode: 500,
+        headers: {},
+        body: "",
+      };
+    }
+  }
 };
