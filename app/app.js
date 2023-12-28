@@ -65,9 +65,9 @@ exports.handler = async (event, context) => {
     for (let i = 0; i < event.Records.length; i++) {
       const record = event.Records[i];
 
-      const { body: token, receiptHandle } = record;
+      const { body, receiptHandle } = record;
 
-      console.log(`Processing message: ${token}`);
+      console.log(`Processing message: ${body.token}`);
 
       // Load data from S3
       const data = await s3
@@ -103,65 +103,21 @@ exports.handler = async (event, context) => {
 
       console.log("Getting random gif");
 
-      // Get random GIF ID
-      const gifs = [
-        "Ck80ojSw2VQWfwFfnY",
-        "cS8Dk5NywlGLvaIV0r",
-        "iGkCVENBbn6230aiPp",
-        "sBRGYMFHTdGqorjlyO",
-        "tLVuQirOR5NB4qix5P",
-        "T8QbiYtxoglu6BpA3s",
-        "aaupIDpb0zN3ME96ll",
-        "YvwleWJv6NRLDC52K6",
-        "3rDiaWkdR76tdKXIDd",
-        "CokjjWNnFJ3fZ0YN02",
-        "dBMW2ykthSv7ix64Ou",
-        "26vUyWzmjBIlNJvRC",
-        "h7dhRBp5YXZqQ0mr3f",
-        "koyjGfQHIZQKk",
-        "kkoRgXbTCPY3K",
-        "rXNES6I8A7hEcq2uy1",
-        "SKga1r0b9l6ep2khVQ",
-        "bXR6c79iS8L4qa8UOx",
-        "PbfVmhMI9SvaKcUOsb",
-        "NjvLuSaJXKmjz0UDcf",
-        "xThuW2fbatiCsyY3zW",
-        "3o6Ztb45EYezY9x9gQ",
-        "3ohzdZO0nAL1H2LdMA",
-        "xUPGcknoZZseQLFvws",
-        "SYrMAmJZT4YcU",
-        "3ohzdOFQWcCZA8dRT2",
-        "l0MYMranKNhMUFveE",
-        "l378oRMuApI3a35Cg",
-        "3o7TKVA3gcjiKcFuV2",
-        "3oEduJXGwLsIe1RRPG",
-        "3og0IGjLXRttYbbtcc",
-        "n8k3O3KWXbPrPfsm7s",
-        "evlvEhB86RQidkiVBO",
-        "3oFzmiu86mdcjOsjOU",
-        "2bXyklhc7qQv0dTVXr",
-        "26xBs1E58r3ZHYvgQ",
-        "isqxY03RuhGxNbCPzY",
-        "3o7aD56B2QS5MyTGfe",
-        "MasbBp1KusW3JkdSXP",
-        "uBaCEhYJ1nW3mehKKr",
-        "NsQWLvDrT6LYd1jBGK",
-        "l378wcSfS7eXWQgla",
-        "l0CLUrZiblFUBMMrC",
-        "3otO6NFBIAFg2vPZuM",
-        "2uI6DhDIWY9iBT2sB8",
-        "3og0IQ29pE7zRwbh60",
-        "dJPYnoer6wo4HQw1jI",
-        "9V1F9JA4O8cCl1m42m",
-        "1AjFHhwg84p8IHF179",
-        "xUOxf8yMjHNCkojUE8",
-        "3oxHQGVPrFKfHJjdde",
-        "xT9IgKNauJJOCbT07m",
-        "xT9Igg1Kq1xmy7123m",
-        "3oKIP7rZqEbTWA2n60",
-      ];
+      var gifId;
+      if (body.requestedBackground !== "") {
+        console.log(`Requested background: ${body.requestedBackground}`);
+        gifId = body.requestedBackground;
+      } else {
+        // Get random GIF ID
+        const gifs = fs
+          .readdirSync(`./libs/gifs/`) // Load gifs
+          .filter((path) => path.includes("-500.webp")) // Grab one of the copies
+          .map((path) => path.split("-")[0]) // Get keys from file path
+          .sort(); // Sort them
 
-      const gifId = gifs[Math.floor(Math.random() * gifs.length)];
+        gifId = gifs[Math.floor(Math.random() * gifs.length)];
+      }
+
       const largeGifPath = `./libs/gifs/${gifId}-500.webp`;
 
       console.log("Wowifying");
@@ -239,6 +195,15 @@ exports.handler = async (event, context) => {
     const sqs = new AWS.SQS();
     const s3 = new AWS.S3();
     const token = uuidv4();
+    var requestedBackground = "";
+
+    if (
+      event.queryStringParameters &&
+      event.queryStringParameters.backgroundId
+    ) {
+      requestedBackground = event.queryStringParameters.backgroundId;
+    }
+
     try {
       // Send message to SQS with content to be processed and token
       console.log(`Adding message to queue: ${token}`);
@@ -256,7 +221,10 @@ exports.handler = async (event, context) => {
       // Put message on queue for processing
       await sqs
         .sendMessage({
-          MessageBody: token,
+          MessageBody: JSON.stringify({
+            token: token,
+            requestedBackground: requestedBackground,
+          }),
           QueueUrl:
             "https://sqs.us-west-2.amazonaws.com/368081326042/wow-emoji-queue",
         })
