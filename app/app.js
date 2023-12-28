@@ -68,11 +68,15 @@ exports.handler = async (event, context) => {
       const { body, receiptHandle } = record;
 
       var parsedBody = JSON.parse(body);
-      console.log(`Processing message: ${parsedBody.token}`);
+      const token = parsedBody.token;
+      console.log(`Processing message: ${token}`);
 
       // Load data from S3
       const data = await s3
-        .getObject({ Bucket: "image-wower-data", Key: `${token}-input` })
+        .getObject({
+          Bucket: "image-wower-data",
+          Key: `${token}-input`,
+        })
         .promise();
 
       // Load model if it doesn't exist on this instance
