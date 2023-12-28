@@ -67,7 +67,8 @@ exports.handler = async (event, context) => {
 
       const { body, receiptHandle } = record;
 
-      console.log(`Processing message: ${body.token}`);
+      var parsedBody = JSON.parse(body);
+      console.log(`Processing message: ${parsedBody.token}`);
 
       // Load data from S3
       const data = await s3
@@ -104,9 +105,9 @@ exports.handler = async (event, context) => {
       console.log("Getting random gif");
 
       var gifId;
-      if (body.requestedBackground !== "") {
-        console.log(`Requested background: ${body.requestedBackground}`);
-        gifId = body.requestedBackground;
+      if (parsedBody.requestedBackground !== "") {
+        console.log(`Requested background: ${parsedBody.requestedBackground}`);
+        gifId = parsedBody.requestedBackground;
       } else {
         // Get random GIF ID
         const gifs = fs
