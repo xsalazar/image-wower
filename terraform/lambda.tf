@@ -2,8 +2,8 @@ resource "aws_lambda_function" "instance" {
   function_name = "image-wower"
   image_uri     = "foo:bar"
   role          = aws_iam_role.instance.arn
-  timeout       = 90   // seconds
-  memory_size   = 5120 // MB
+  timeout       = 180   // seconds
+  memory_size   = 10240 // MB
   package_type  = "Image"
 
   ephemeral_storage {
