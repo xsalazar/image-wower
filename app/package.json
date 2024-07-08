@@ -4,8 +4,8 @@
   "main": "index.js",
   "dependencies": {
     "aws-sdk": "^2.1655.0",
-    "sharp": "^0.33.4",
-    "uuid": "^10.0.0"
+    "sharp": "0.33.1",
+    "uuid": "9.0.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
