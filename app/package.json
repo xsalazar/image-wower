@@ -5,7 +5,7 @@
   "dependencies": {
     "aws-sdk": "^2.1654.0",
     "sharp": "^0.33.4",
-    "uuid": "^9.0.1"
+    "uuid": "^10.0.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
