@@ -43,7 +43,7 @@ resource "aws_sqs_queue_policy" "rembg_policy" {
           "Resource": "${aws_sqs_queue.rembg_input.arn}",
           "Condition": {
             "ArnEquals": {
-              "aws:SourceArn": "${aws_lambda_function.rembg_input.arn}"
+              "aws:SourceArn": "${aws_lambda_function.rembg.arn}"
             }
           },
           "Principal": "*"
