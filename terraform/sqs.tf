@@ -9,7 +9,7 @@ resource "aws_sqs_queue" "rembg_input" {
 }
 
 data "aws_sqs_queue" "rembg_input_data" {
-  name = aws_sqs_queue.rembg_input.name
+  name = "wow-emoji-rembg-input-queue"
 }
 
 resource "aws_sqs_queue" "rembg_input_deadletter" {
@@ -69,7 +69,7 @@ resource "aws_sqs_queue" "combiner_input" {
 }
 
 data "aws_sqs_queue" "combiner_input_data" {
-  name = aws_sqs_queue.combiner_input.name
+  name = "wow-emoji-combiner-input-queue"
 }
 
 resource "aws_sqs_queue" "combiner_input_deadletter" {
