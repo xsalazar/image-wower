@@ -1,9 +1,9 @@
 terraform {
-  required_version = "~> 1.1.2"
+  required_version = "~> 1.10.2"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.30.0"
+      version = "~> 5.81.0"
     }
   }
   backend "s3" {
@@ -22,14 +22,14 @@ provider "aws" {
   }
 }
 
-output "ecr_repository_name" {
-  value = aws_ecr_repository.instance.name
+output "api_lambda_function" {
+  value = aws_lambda_function.api.function_name
 }
 
-output "lambda_function" {
-  value = aws_lambda_function.instance.function_name
+output "rembg_lambda_function" {
+  value = aws_lambda_function.rembg.function_name
 }
 
-output "gifs_bucket" {
-  value = "s3://${aws_s3_bucket.gifs.bucket}"
+output "combiner_lambda_function" {
+  value = aws_lambda_function.combiner.function_name
 }

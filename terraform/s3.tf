@@ -1,4 +1,4 @@
-resource "aws_s3_bucket" "instance" {
+resource "aws_s3_bucket" "data" {
   bucket = "image-wower-data"
 }
 

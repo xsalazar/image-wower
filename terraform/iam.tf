@@ -29,29 +29,20 @@ data "aws_iam_policy_document" "lambda_access_policy_document" {
     resources = ["*"]
   }
 
-  // For ECR access
-  statement {
-    effect = "Allow"
-    actions = [
-      "ecr:SetRepositoryPolicy", "ecr:GetRepositoryPolicy"
-    ]
-    resources = ["${aws_ecr_repository.instance.arn}"]
-  }
-
   // For SQS access
   statement {
     effect = "Allow"
     actions = [
       "sqs:DeleteMessage", "sqs:GetQueueAttributes", "sqs:ReceiveMessage", "sqs:SendMessage"
     ]
-    resources = ["${aws_sqs_queue.instance.arn}"]
+    resources = ["${aws_sqs_queue.combiner_input.arn}", "${aws_sqs_queue.rembg_input.arn}"]
   }
 
   // For S3 access
   statement {
     effect    = "Allow"
     actions   = ["s3:*"]
-    resources = ["${aws_s3_bucket.instance.arn}", "${aws_s3_bucket.instance.arn}/*"]
+    resources = ["${aws_s3_bucket.data.arn}", "${aws_s3_bucket.data.arn}/*", "${aws_s3_bucket.gifs.arn}", "${aws_s3_bucket.gifs.arn}/*"]
   }
 }
 
@@ -72,14 +63,14 @@ resource "aws_iam_role_policy_attachment" "instance" {
 
 resource "aws_lambda_permission" "lambda_root_permission" {
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.instance.function_name
+  function_name = aws_lambda_function.api.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.instance.execution_arn}/*/*/"
 }
 
 resource "aws_lambda_permission" "lambda_proxy_permission" {
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.instance.function_name
+  function_name = aws_lambda_function.api.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.instance.execution_arn}/*/*/*"
 }
