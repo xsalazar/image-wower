@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "app/**"
+      - "src/rembg/**"
   workflow_dispatch:
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
       - name: Setup Terraform 🏗
         uses: hashicorp/setup-terraform@v3.1.2
         with:
-          terraform_version: 1.1.2
+          terraform_version: 1.10.2
           terraform_wrapper: false # Necessary to access output
 
       - name: Terraform Init ✨
@@ -36,7 +36,7 @@ jobs:
         working-directory: ./terraform
 
       - name: Save Lambda function name to Environment Variables 💾
-        run: echo "LAMBDA_FUNCTION_NAME=$(terraform output -raw lambda_function)" >> $GITHUB_ENV
+        run: echo "LAMBDA_FUNCTION_NAME=$(terraform output -raw rembg_lambda_function)" >> $GITHUB_ENV
         working-directory: ./terraform
 
       - name: Save ECR name to Environment Variables 🛟
@@ -47,35 +47,24 @@ jobs:
         run: echo "BUCKET=$(terraform output -raw gifs_bucket)" >> $GITHUB_ENV
         working-directory: ./terraform
 
-      - name: Setup Node 🏗
-        uses: actions/setup-node@v4
+      - name: Setup Python 🏗
+        uses: actions/setup-python@v5
         with:
-          node-version: "18"
+          python-version: "3.9"
 
-      - name: Login to Amazon ECR 🧑‍💻
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Copy gifs to local directory ⤵️
-        env:
-          BUCKET: ${{ env.BUCKET}}
-        working-directory: ./app
-        run: aws s3 sync $BUCKET ./libs/gifs
-
-      - name: Build, tag, and push image to Amazon ECR 🏷
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ env.ECR_NAME }}
-          IMAGE_TAG: ${{ github.sha }}
+      - name: Install packages 📀
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
-        working-directory: ./app
+          pip install --target ./package -r requirements.txt
+          cd package
+          zip -r ../packages.zip .
+        working-directory: ./src/combiner
+
+      - name: Create Deployment Package 🎁
+        run: zip -r lambda.zip .
+        working-directory: ./src/rembg
 
       - name: Deploy Lambda Function 🚀
         env:
           LAMBDA_FUNCTION_NAME: ${{ env.LAMBDA_FUNCTION_NAME }}
-        run: aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --image-uri $IMAGE_URI
-        working-directory: ./app
+        run: aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file fileb://lambda.zip
+        working-directory: ./src/rembg
