@@ -1,4 +1,4 @@
-name: Deploy Application
+name: Deploy Combiner Application
 
 on:
   push:

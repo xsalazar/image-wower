@@ -1,4 +1,4 @@
-name: Deploy Application
+name: Deploy Rembg Application
 
 on:
   push:
