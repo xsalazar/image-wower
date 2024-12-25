@@ -26,7 +26,7 @@ def handler(event, context):
 
         # Remove background
         input = Image.open(BytesIO(data["Body"].read()))
-        output = remove(input, force_return_bytes=True)
+        output = remove(input)
 
         # Save to S3
         s3.put_object(Bucket=os.environ["WOW_EMOJI_DATA_S3_BUCKET"],
