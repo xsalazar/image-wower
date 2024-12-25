@@ -1,10 +1,7 @@
-import base64
 import boto3
-from io import BytesIO
 import os
 import json
 from rembg import remove
-from PIL import Image
 
 
 def handler(event, context):
