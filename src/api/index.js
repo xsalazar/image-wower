@@ -102,14 +102,13 @@ exports.handler = async (event, context) => {
     ) {
       requestedBackground = event.queryStringParameters.backgroundId;
     } else {
-      const gifIds = await s3
-        .send(
+      const gifIds = (
+        await s3.send(
           new ListObjectsV2Command({
             Bucket: process.env.WOW_EMOJI_GIFS_S3_BUCKET,
           })
         )
-        .Contents.map((c) => c.Key.split("-")[0])
-        .sort();
+      ).Contents.map((c) => c.Key.split("-")[0]).sort();
 
       requestedBackground = gifIds[Math.floor(Math.random() * gifIds.length)];
     }
