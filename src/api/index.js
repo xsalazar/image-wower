@@ -1,4 +1,3 @@
-const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const sharp = require("sharp");
 const {
