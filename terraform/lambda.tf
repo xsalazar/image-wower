@@ -37,7 +37,7 @@ resource "aws_cloudwatch_log_group" "api" {
 // Image background remover
 resource "aws_lambda_function" "rembg" {
   function_name = "image-wower-rembg"
-  image_uri     = "368081326042.dkr.ecr.us-west-2.amazonaws.com/image-wower-ecr-repo:27dcc9248234b6c029d4bd9596e1e60d54a5bbb0"
+  image_uri     = "foo:bar"
   role          = aws_iam_role.instance.arn
   timeout       = 180   // seconds
   memory_size   = 10240 // MB
@@ -59,7 +59,7 @@ resource "aws_lambda_function" "rembg" {
   // Since CI/CD will deploy this application externally, these do not need to be tracked after creation
   lifecycle {
     ignore_changes = [
-      source_code_hash,
+      image_uri
     ]
   }
 }
