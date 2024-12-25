@@ -1,0 +1,17 @@
+{
+  "name": "image-wower-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.716.0",
+    "@aws-sdk/client-sqs": "^3.716.0",
+    "sharp": "^0.33.5",
+    "uuid": "^11.0.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

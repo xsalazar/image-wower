@@ -1,0 +1,217 @@
+const fs = require("fs");
+const { v4: uuidv4 } = require("uuid");
+const sharp = require("sharp");
+const {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  HeadObjectCommand,
+  ListObjectsV2Command,
+  PutObjectCommand,
+  S3Client,
+} = require("@aws-sdk/client-s3");
+const { SendMessageCommand, SQSClient } = require("@aws-sdk/client-sqs");
+
+exports.handler = async (event, context) => {
+  console.log(JSON.stringify(event));
+  const s3 = new S3Client();
+  const sqs = new SQSClient();
+
+  // Check S3 for result, return it, if found
+  if (
+    event.queryStringParameters &&
+    event.queryStringParameters.wowToken &&
+    event.requestContext.http.method === "GET"
+  ) {
+    const token = event.queryStringParameters.wowToken;
+
+    try {
+      // Check if data has finished processing
+      await s3.send(
+        HeadObjectCommand({
+          Bucket: process.env.WOW_EMOJI_DATA_S3_BUCKET,
+          Key: token,
+        })
+      );
+
+      // If call above doesn't fail, get data
+      const dataBuffer = Buffer.concat(
+        await (
+          await s3.send(
+            new GetObjectCommand({
+              Bucket: process.env.WOW_EMOJI_DATA_S3_BUCKET,
+              Key: token,
+            })
+          )
+        ).Body.toArray()
+      );
+
+      // Delete object after retrieval
+      await s3.send(
+        DeleteObjectCommand({
+          Bucket: process.env.WOW_EMOJI_DATA_S3_BUCKET,
+          Key: token,
+        })
+      );
+
+      await s3.send(
+        DeleteObjectCommand({
+          Bucket: process.env.WOW_EMOJI_DATA_S3_BUCKET,
+          Key: `${token}-input`,
+        })
+      );
+
+      await s3.send(
+        DeleteObjectCommand({
+          Bucket: process.env.WOW_EMOJI_DATA_S3_BUCKET,
+          Key: `${token}-input-rembg`,
+        })
+      );
+
+      return {
+        cookies: [],
+        isBase64Encoded: false,
+        statusCode: 200,
+        headers: { "content-type": "application/json" },
+        body: dataBuffer.toString(),
+      };
+    } catch (e) {
+      console.log(JSON.stringify(e));
+
+      return {
+        cookies: [],
+        isBase64Encoded: false,
+        statusCode: 404, // Processing
+        headers: {},
+        body: "",
+      };
+    }
+  }
+
+  // Otherwise, check for image data to submit to SQS and return token to poll with
+  else if (event.body && event.requestContext.http.method === "PUT") {
+    const token = uuidv4();
+    let requestedBackground = "";
+
+    // Check if we're even adding something normal to begin with
+    // TODO
+
+    // Choose a background gif
+    if (
+      event.queryStringParameters &&
+      event.queryStringParameters.backgroundId
+    ) {
+      requestedBackground = event.queryStringParameters.backgroundId;
+    } else {
+      const gifIds = await s3
+        .send(
+          ListObjectsV2Command({ Bucket: process.env.WOW_EMOJI_GIFS_S3_BUCKET })
+        )
+        .Contents.map((c) => c.Key.split("-")[0])
+        .sort();
+
+      requestedBackground = gifIds[Math.floor(Math.random() * gifIds.length)];
+    }
+
+    // Normalize input file before saving to S3
+    const normalizedFileBuffer = await sharp(Buffer.from(event.body, "base64"))
+      .rotate()
+      .resize({
+        width: 500,
+        height: 500,
+      })
+      .png()
+      .toBuffer();
+
+    try {
+      // Send message to SQS with content to be processed and token
+      console.log(`Adding message to queue: ${token}`);
+
+      // Add normalized input file to S3
+      await s3.send(
+        PutObjectCommand({
+          Bucket: process.env.WOW_EMOJI_DATA_S3_BUCKET,
+          Key: `${token}-input`,
+          Body: normalizedFileBuffer,
+          ContentType: "image/png",
+        })
+      );
+
+      // Put message on queue for processing
+      await sqs.send(
+        SendMessageCommand({
+          MessageBody: JSON.stringify({
+            token: token,
+            requestedBackground: requestedBackground,
+          }),
+          QueueUrl: process.env.WOW_EMOJI_REMBG_INPUT_QUEUE,
+        })
+      );
+
+      return {
+        cookies: [],
+        isBase64Encoded: false,
+        statusCode: 202,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ token: token }),
+      };
+    } catch (e) {
+      console.log(JSON.stringify(e));
+
+      return {
+        cookies: [],
+        isBase64Encoded: false,
+        statusCode: 500,
+        headers: {},
+        body: "",
+      };
+    }
+  }
+
+  // TODO Check if we're requesting thumbnails
+  // else if (
+  //   event.queryStringParameters &&
+  //   event.queryStringParameters.thumbnails &&
+  //   event.requestContext.http.method === "GET"
+  // ) {
+  //   try {
+  //     const ret = { thumbnails: {} };
+
+  //     // Grab all the large, 500-px gif paths
+  //     const gifs = fs
+  //       .readdirSync(`./libs/gifs/`)
+  //       .filter((path) => path.includes("-500.webp"))
+  //       .sort();
+
+  //     // Iterate over each item, fetch the gif, and save thumbnail to output
+  //     for (var i = 0; i < gifs.length; i++) {
+  //       const gifPath = `./libs/gifs/${gifs[i]}`;
+  //       const gifName = gifs[i].split("-")[0];
+  //       const frame = (
+  //         await sharp(gifPath, { pages: 1 })
+  //           .resize({ width: 64, height: 64 })
+  //           .png()
+  //           .toBuffer()
+  //       ).toString("base64");
+  //       ret.thumbnails[gifName] = frame;
+  //     }
+
+  //     return {
+  //       cookies: [],
+  //       isBase64Encoded: false,
+  //       statusCode: 200,
+  //       headers: { "content-type": "application/json" },
+  //       body: JSON.stringify(ret),
+  //     };
+  //   } catch (e) {
+  //     console.log(JSON.stringify(e));
+
+  //     return {
+  //       cookies: [],
+  //       isBase64Encoded: false,
+  //       statusCode: 500,
+  //       headers: {},
+  //       body: "",
+  //     };
+  //   }
+  // }
+};
