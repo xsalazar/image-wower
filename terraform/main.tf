@@ -30,12 +30,8 @@ output "rembg_lambda_function" {
   value = aws_lambda_function.rembg.function_name
 }
 
-output "rembg_lambda_deploy_bucket_url" {
-  value = aws_s3_bucket.rembg_lambda_deploy_bucket.url
-}
-
 output "rembg_lambda_deploy_bucket_name" {
-  value = aws_s3_bucket.rembg_lambda_deploy_bucket.name
+  value = aws_s3_bucket.rembg_lambda_deploy_bucket.bucket
 }
 
 output "combiner_lambda_function" {
