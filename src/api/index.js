@@ -185,7 +185,7 @@ exports.handler = async (event, context) => {
       // Iterate over each item, fetch the gif, and save thumbnail to output
       for (var i = 0; i < gifKeys.length; i++) {
         const gifKey = gifKeys[i];
-        const gifName = gifs[i].split("-")[0];
+        const gifName = gifKey[i].split("-")[0];
 
         const gif = Buffer.concat(
           await (
