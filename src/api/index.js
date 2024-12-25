@@ -165,53 +165,65 @@ exports.handler = async (event, context) => {
         body: "",
       };
     }
+  } else if (
+    event.queryStringParameters &&
+    event.queryStringParameters.thumbnails &&
+    event.requestContext.http.method === "GET"
+  ) {
+    try {
+      const ret = { thumbnails: {} };
+
+      // Grab all the large, 500-px gif paths
+      const gifKeys = (
+        await s3.send(
+          new ListObjectsV2Command({
+            Bucket: process.env.WOW_EMOJI_GIFS_S3_BUCKET,
+          })
+        )
+      ).Contents.map((c) => c.Key).sort();
+
+      // Iterate over each item, fetch the gif, and save thumbnail to output
+      for (var i = 0; i < gifKeys.length; i++) {
+        const gifKey = gifKeys[i];
+        const gifName = gifs[i].split("-")[0];
+
+        const gif = Buffer.concat(
+          await (
+            await s3.send(
+              new GetObjectCommand({
+                Bucket: process.env.WOW_EMOJI_GIFS_S3_BUCKET,
+                Key: gifKey,
+              })
+            )
+          ).Body.toArray()
+        );
+
+        const frame = (
+          await sharp(gif, { pages: 1 })
+            .resize({ width: 64, height: 64 })
+            .png()
+            .toBuffer()
+        ).toString("base64");
+        ret.thumbnails[gifName] = frame;
+      }
+
+      return {
+        cookies: [],
+        isBase64Encoded: false,
+        statusCode: 200,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(ret),
+      };
+    } catch (e) {
+      console.log(JSON.stringify(e));
+
+      return {
+        cookies: [],
+        isBase64Encoded: false,
+        statusCode: 500,
+        headers: {},
+        body: "",
+      };
+    }
   }
-
-  // TODO Check if we're requesting thumbnails
-  // else if (
-  //   event.queryStringParameters &&
-  //   event.queryStringParameters.thumbnails &&
-  //   event.requestContext.http.method === "GET"
-  // ) {
-  //   try {
-  //     const ret = { thumbnails: {} };
-
-  //     // Grab all the large, 500-px gif paths
-  //     const gifs = fs
-  //       .readdirSync(`./libs/gifs/`)
-  //       .filter((path) => path.includes("-500.webp"))
-  //       .sort();
-
-  //     // Iterate over each item, fetch the gif, and save thumbnail to output
-  //     for (var i = 0; i < gifs.length; i++) {
-  //       const gifPath = `./libs/gifs/${gifs[i]}`;
-  //       const gifName = gifs[i].split("-")[0];
-  //       const frame = (
-  //         await sharp(gifPath, { pages: 1 })
-  //           .resize({ width: 64, height: 64 })
-  //           .png()
-  //           .toBuffer()
-  //       ).toString("base64");
-  //       ret.thumbnails[gifName] = frame;
-  //     }
-
-  //     return {
-  //       cookies: [],
-  //       isBase64Encoded: false,
-  //       statusCode: 200,
-  //       headers: { "content-type": "application/json" },
-  //       body: JSON.stringify(ret),
-  //     };
-  //   } catch (e) {
-  //     console.log(JSON.stringify(e));
-
-  //     return {
-  //       cookies: [],
-  //       isBase64Encoded: false,
-  //       statusCode: 500,
-  //       headers: {},
-  //       body: "",
-  //     };
-  //   }
-  // }
 };
