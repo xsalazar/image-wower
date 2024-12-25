@@ -29,8 +29,8 @@ def handler(event, context):
         output = remove(input)
 
         # Save to S3
-        s3.put_object(Bucket=os.environ["WOW_EMOJI_DATA_S3_BUCKET"],
-                      Key=f"{token}-input-rembg", Body=output)
+        s3.upload_fileobj(Bucket=os.environ["WOW_EMOJI_DATA_S3_BUCKET"],
+                          Key=f"{token}-input-rembg", Body=output)
 
         # Add new message to next SQS queue
         sqs.send_message(QueueUrl=os.environ["WOW_EMOJI_COMBINER_INPUT_QUEUE"],
