@@ -35,8 +35,10 @@ jobs:
         run: terraform init -upgrade
         working-directory: ./terraform
 
-      - name: Save Lambda function name to Environment Variables 💾
-        run: echo "LAMBDA_FUNCTION_NAME=$(terraform output -raw rembg_lambda_function)" >> $GITHUB_ENV
+      - name: Save Terraform variables to Environment Variables 💾
+        run: |
+          echo "LAMBDA_FUNCTION_NAME=$(terraform output -raw rembg_lambda_function)" >> $GITHUB_ENV
+          echo "DEPLOY_BUCKET_NAME=$(terraform output -raw rembg_lambda_deploy_bucket_name)" >> $GITHUB_ENV
         working-directory: ./terraform
 
       - name: Setup Python 🏗
@@ -52,11 +54,15 @@ jobs:
         working-directory: ./src/rembg
 
       - name: Create Deployment Package 🎁
-        run: zip -r lambda.zip .
+        run: zip -9 -r lambda.zip .
+        working-directory: ./src/rembg
+
+      - name: Upload Deployment Package to S3 ☁️
+        run: aws s3 cp ./lambda.zip s3://$DEPLOY_BUCKET_NAME/lambda.zip
         working-directory: ./src/rembg
 
       - name: Deploy Lambda Function 🚀
         env:
           LAMBDA_FUNCTION_NAME: ${{ env.LAMBDA_FUNCTION_NAME }}
-        run: aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file fileb://lambda.zip
+        run: aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --s3-bucket $DEPLOY_BUCKET_NAME --s3-key lambda.zip
         working-directory: ./src/rembg
