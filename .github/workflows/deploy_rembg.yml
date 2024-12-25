@@ -38,7 +38,7 @@ jobs:
       - name: Save Terraform variables to Environment Variables 💾
         run: |
           echo "LAMBDA_FUNCTION_NAME=$(terraform output -raw rembg_lambda_function)" >> $GITHUB_ENV
-          echo "DEPLOY_BUCKET_NAME=$(terraform output -raw rembg_lambda_deploy_bucket_name)" >> $GITHUB_ENV
+          echo "ECR_NAME=$(terraform output -raw ecr_repository_name)" >> $GITHUB_ENV
         working-directory: ./terraform
 
       - name: Setup Python 🏗
@@ -46,23 +46,24 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Install packages 📀
+      - name: Login to Amazon ECR 🧑‍💻
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push image to Amazon ECR 🏷
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.ECR_NAME }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          pip install --target ./package -r requirements.txt
-          cd package
-          zip -r ../packages.zip .
-        working-directory: ./src/rembg
-
-      - name: Create Deployment Package 🎁
-        run: zip -9 -r lambda.zip .
-        working-directory: ./src/rembg
-
-      - name: Upload Deployment Package to S3 ☁️
-        run: aws s3 cp ./lambda.zip s3://$DEPLOY_BUCKET_NAME/lambda.zip
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
         working-directory: ./src/rembg
 
       - name: Deploy Lambda Function 🚀
         env:
           LAMBDA_FUNCTION_NAME: ${{ env.LAMBDA_FUNCTION_NAME }}
-        run: aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --s3-bucket $DEPLOY_BUCKET_NAME --s3-key lambda.zip
+        run: aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --image-uri $IMAGE_URI
         working-directory: ./src/rembg
