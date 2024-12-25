@@ -37,12 +37,11 @@ resource "aws_cloudwatch_log_group" "api" {
 // Image background remover
 resource "aws_lambda_function" "rembg" {
   function_name = "image-wower-rembg"
-  filename      = "${path.module}/dummy-python-lambda-package/lambda.zip" // Simple hello world application
-  handler       = "index.handler"
+  image_uri     = "foo:bar"
   role          = aws_iam_role.instance.arn
   timeout       = 180   // seconds
   memory_size   = 10240 // MB
-  runtime       = "python3.13"
+  package_type  = "Image"
 
   environment {
     variables = {

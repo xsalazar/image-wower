@@ -29,6 +29,15 @@ data "aws_iam_policy_document" "lambda_access_policy_document" {
     resources = ["*"]
   }
 
+  // For ECR access
+  statement {
+    effect = "Allow"
+    actions = [
+      "ecr:SetRepositoryPolicy", "ecr:GetRepositoryPolicy"
+    ]
+    resources = ["${aws_ecr_repository.instance.arn}"]
+  }
+
   // For SQS access
   statement {
     effect = "Allow"

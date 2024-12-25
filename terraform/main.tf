@@ -22,16 +22,16 @@ provider "aws" {
   }
 }
 
+output "ecr_repository_name" {
+  value = aws_ecr_repository.instance.name
+}
+
 output "api_lambda_function" {
   value = aws_lambda_function.api.function_name
 }
 
 output "rembg_lambda_function" {
   value = aws_lambda_function.rembg.function_name
-}
-
-output "rembg_lambda_deploy_bucket_name" {
-  value = aws_s3_bucket.rembg_lambda_deploy_bucket.bucket
 }
 
 output "combiner_lambda_function" {
