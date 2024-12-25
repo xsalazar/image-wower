@@ -39,14 +39,6 @@ jobs:
         run: echo "LAMBDA_FUNCTION_NAME=$(terraform output -raw rembg_lambda_function)" >> $GITHUB_ENV
         working-directory: ./terraform
 
-      - name: Save ECR name to Environment Variables 🛟
-        run: echo "ECR_NAME=$(terraform output -raw ecr_repository_name)" >> $GITHUB_ENV
-        working-directory: ./terraform
-
-      - name: Save S3 bucket name to Environment Variables 🛟
-        run: echo "BUCKET=$(terraform output -raw gifs_bucket)" >> $GITHUB_ENV
-        working-directory: ./terraform
-
       - name: Setup Python 🏗
         uses: actions/setup-python@v5
         with:
@@ -57,7 +49,7 @@ jobs:
           pip install --target ./package -r requirements.txt
           cd package
           zip -r ../packages.zip .
-        working-directory: ./src/combiner
+        working-directory: ./src/rembg
 
       - name: Create Deployment Package 🎁
         run: zip -r lambda.zip .
