@@ -8,8 +8,8 @@ from PIL import Image
 
 
 def handler(event, context):
-    s3 = boto3.resource('s3')
-    sqs = boto3.resource('sqs')
+    s3 = boto3.client('s3')
+    sqs = boto3.client('sqs')
 
     # Loops through every file uploaded
     for record in event['Records']:
