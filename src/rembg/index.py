@@ -30,7 +30,7 @@ def handler(event, context):
 
         # Save to S3
         s3.upload_fileobj(Bucket=os.environ["WOW_EMOJI_DATA_S3_BUCKET"],
-                          Key=f"{token}-input-rembg", Body=output)
+                          Key=f"{token}-input-rembg", Fileobj=BytesIO(output))
 
         # Add new message to next SQS queue
         sqs.send_message(QueueUrl=os.environ["WOW_EMOJI_COMBINER_INPUT_QUEUE"],
