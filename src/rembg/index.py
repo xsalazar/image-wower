@@ -25,7 +25,7 @@ def handler(event, context):
         print("Removing background")
 
         # Remove background
-        input = Image.open(BytesIO(data["Body"].read()))
+        input = BytesIO(data["Body"].read())
         output = remove(input)
 
         # Save to S3
