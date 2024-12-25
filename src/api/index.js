@@ -27,7 +27,7 @@ exports.handler = async (event, context) => {
     try {
       // Check if data has finished processing
       await s3.send(
-        HeadObjectCommand({
+        new HeadObjectCommand({
           Bucket: process.env.WOW_EMOJI_DATA_S3_BUCKET,
           Key: token,
         })
@@ -47,21 +47,21 @@ exports.handler = async (event, context) => {
 
       // Delete object after retrieval
       await s3.send(
-        DeleteObjectCommand({
+        new DeleteObjectCommand({
           Bucket: process.env.WOW_EMOJI_DATA_S3_BUCKET,
           Key: token,
         })
       );
 
       await s3.send(
-        DeleteObjectCommand({
+        new DeleteObjectCommand({
           Bucket: process.env.WOW_EMOJI_DATA_S3_BUCKET,
           Key: `${token}-input`,
         })
       );
 
       await s3.send(
-        DeleteObjectCommand({
+        new DeleteObjectCommand({
           Bucket: process.env.WOW_EMOJI_DATA_S3_BUCKET,
           Key: `${token}-input-rembg`,
         })
@@ -104,7 +104,9 @@ exports.handler = async (event, context) => {
     } else {
       const gifIds = await s3
         .send(
-          ListObjectsV2Command({ Bucket: process.env.WOW_EMOJI_GIFS_S3_BUCKET })
+          new ListObjectsV2Command({
+            Bucket: process.env.WOW_EMOJI_GIFS_S3_BUCKET,
+          })
         )
         .Contents.map((c) => c.Key.split("-")[0])
         .sort();
@@ -128,7 +130,7 @@ exports.handler = async (event, context) => {
 
       // Add normalized input file to S3
       await s3.send(
-        PutObjectCommand({
+        new PutObjectCommand({
           Bucket: process.env.WOW_EMOJI_DATA_S3_BUCKET,
           Key: `${token}-input`,
           Body: normalizedFileBuffer,
@@ -138,7 +140,7 @@ exports.handler = async (event, context) => {
 
       // Put message on queue for processing
       await sqs.send(
-        SendMessageCommand({
+        new SendMessageCommand({
           MessageBody: JSON.stringify({
             token: token,
             requestedBackground: requestedBackground,
