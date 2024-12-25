@@ -94,7 +94,7 @@ exports.handler = async (event, context) => {
 
       console.log("Saving data to S3");
       await s3.send(
-        PutObjectCommand({
+        new PutObjectCommand({
           Bucket: process.env.WOW_EMOJI_DATA_S3_BUCKET,
           Key: token,
           ContentType: "application/json",
@@ -107,7 +107,7 @@ exports.handler = async (event, context) => {
 
       console.log(`Deleting message: ${token}`);
       await sqs.send(
-        DeleteMessageCommand({
+        new DeleteMessageCommand({
           QueueUrl: process.env.WOW_EMOJI_COMBINER_INPUT_QUEUE,
           ReceiptHandle: receiptHandle,
         })
