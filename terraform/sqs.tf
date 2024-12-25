@@ -62,7 +62,7 @@ resource "aws_lambda_event_source_mapping" "rembg_sqs_lambda_mapping" {
 # Input queue that feeds into the combiner service
 resource "aws_sqs_queue" "combiner_input" {
   name                       = "wow-emoji-combiner-input-queue"
-  visibility_timeout_seconds = 360 // seconds
+  visibility_timeout_seconds = 90 // seconds
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.combiner_input_deadletter.arn

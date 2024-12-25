@@ -4,8 +4,8 @@ resource "aws_lambda_function" "api" {
   filename      = "${path.module}/dummy-node-lambda-package/lambda.zip" // Simple hello world application
   handler       = "index.handler"
   role          = aws_iam_role.instance.arn
-  timeout       = 180   // seconds
-  memory_size   = 10240 // MB
+  timeout       = 30  // seconds
+  memory_size   = 512 // MB
   runtime       = "nodejs20.x"
 
   environment {
@@ -75,8 +75,8 @@ resource "aws_lambda_function" "combiner" {
   filename      = "${path.module}/dummy-node-lambda-package/lambda.zip" // Simple hello world application
   handler       = "index.handler"
   role          = aws_iam_role.instance.arn
-  timeout       = 180   // seconds
-  memory_size   = 10240 // MB
+  timeout       = 30  // seconds
+  memory_size   = 512 // MB
   runtime       = "nodejs20.x"
 
   environment {
