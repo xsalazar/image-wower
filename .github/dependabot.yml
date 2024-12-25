@@ -1,8 +1,28 @@
 version: 2
 updates:
-  # Main application
+  # API application
   - package-ecosystem: "npm"
-    directory: "/app"
+    directory: "/src/api"
+    labels:
+      - "dependabot :robot:"
+    reviewers:
+      - "xsalazar"
+    schedule:
+      interval: "daily"
+
+  # Rembg application
+  - package-ecosystem: "pip"
+    directory: "/src/rembg"
+    labels:
+      - "dependabot :robot:"
+    reviewers:
+      - "xsalazar"
+    schedule:
+      interval: "daily"
+
+  # Combiner application
+  - package-ecosystem: "npm"
+    directory: "/src/combiner"
     labels:
       - "dependabot :robot:"
     reviewers:
