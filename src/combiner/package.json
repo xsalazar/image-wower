@@ -10,7 +10,7 @@
   "description": "",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.726.1",
-    "@aws-sdk/client-sqs": "^3.726.0",
+    "@aws-sdk/client-sqs": "^3.726.1",
     "sharp": "^0.33.5",
     "uuid": "^11.0.5"
   }
