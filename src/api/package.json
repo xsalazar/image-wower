@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.799.0",
+    "@aws-sdk/client-s3": "^3.800.0",
     "@aws-sdk/client-sqs": "^3.796.0",
     "sharp": "^0.34.1",
     "uuid": "^11.1.0"
