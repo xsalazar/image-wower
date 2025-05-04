@@ -45,11 +45,10 @@ jobs:
           node-version: "20"
 
       - name: Download Background GIF Metadata 💾
-        working-directory: ./src/api
         uses: xsalazar/actions/downloader@master
         with:
           url: "https://backend.wowemoji.dev/?thumbnails=true"
-          filename: "./thumbnails.json"
+          filename: "./src/api/thumbnails.json"
 
       - name: Install packages 📀
         run: npm ci
