@@ -172,7 +172,7 @@ exports.handler = async (event, context) => {
     event.requestContext.http.method === "GET"
   ) {
     try {
-      const ret = JSON.parse(fs.readFileSync("./thumbnails.json"));
+      const ret = JSON.parse(fs.readFileSync("./thumbnails.json").toString());
 
       return {
         cookies: [],
