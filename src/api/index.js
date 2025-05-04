@@ -9,7 +9,7 @@ const {
   S3Client,
 } = require("@aws-sdk/client-s3");
 const { SendMessageCommand, SQSClient } = require("@aws-sdk/client-sqs");
-import fs from "fs";
+const fs = require("fs");
 
 exports.handler = async (event, context) => {
   console.log(JSON.stringify(event));
