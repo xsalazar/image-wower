@@ -9,6 +9,7 @@ const {
   S3Client,
 } = require("@aws-sdk/client-s3");
 const { SendMessageCommand, SQSClient } = require("@aws-sdk/client-sqs");
+import fs from "fs";
 
 exports.handler = async (event, context) => {
   console.log(JSON.stringify(event));
@@ -171,41 +172,7 @@ exports.handler = async (event, context) => {
     event.requestContext.http.method === "GET"
   ) {
     try {
-      const ret = { thumbnails: {} };
-
-      // Grab all the large, 500-px gif paths
-      const gifKeys = (
-        await s3.send(
-          new ListObjectsV2Command({
-            Bucket: process.env.WOW_EMOJI_GIFS_S3_BUCKET,
-          })
-        )
-      ).Contents.map((c) => c.Key).sort();
-
-      // Iterate over each item, fetch the gif, and save thumbnail to output
-      for (var i = 0; i < gifKeys.length; i++) {
-        const gifKey = gifKeys[i];
-        const gifName = gifKey.split("-")[0];
-
-        const gif = Buffer.concat(
-          await (
-            await s3.send(
-              new GetObjectCommand({
-                Bucket: process.env.WOW_EMOJI_GIFS_S3_BUCKET,
-                Key: gifKey,
-              })
-            )
-          ).Body.toArray()
-        );
-
-        const frame = (
-          await sharp(gif, { pages: 1 })
-            .resize({ width: 64, height: 64 })
-            .png()
-            .toBuffer()
-        ).toString("base64");
-        ret.thumbnails[gifName] = frame;
-      }
+      const ret = JSON.parse(fs.readFileSync("./thumbnails.json"));
 
       return {
         cookies: [],
