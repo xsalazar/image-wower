@@ -32,7 +32,7 @@ jobs:
 
       - name: Terraform Init ✨
         id: init
-        run: terraform init -upgrade -force-copy
+        run: terraform init -upgrade
         working-directory: ./terraform
 
       - name: Terraform Apply 🚀
