@@ -1,5 +1,5 @@
 {
-  "name": "image-wower-api",
+  "name": "wow-emoji-backend-api",
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
