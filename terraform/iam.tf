@@ -56,12 +56,12 @@ data "aws_iam_policy_document" "lambda_access_policy_document" {
 }
 
 resource "aws_iam_role" "instance" {
-  name               = "lambda-iam-role-image-wower"
+  name               = "wow-emoji-lambda-iam-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy_document.json
 }
 
 resource "aws_iam_policy" "instance" {
-  name   = "lambda-image-wower-iam-policy"
+  name   = "wow-emoji-lambda-iam-policy"
   policy = data.aws_iam_policy_document.lambda_access_policy_document.json
 }
 

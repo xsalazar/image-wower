@@ -1,5 +1,5 @@
 resource "aws_apigatewayv2_api" "instance" {
-  name                         = "image-wower-api-gateway"
+  name                         = "wow-emoji-api-gateway"
   protocol_type                = "HTTP"
   disable_execute_api_endpoint = true
 

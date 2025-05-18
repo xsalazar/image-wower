@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "data" {
-  bucket = "image-wower-data"
+  bucket = "wow-emoji-data"
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "l1" {
@@ -14,5 +14,5 @@ resource "aws_s3_bucket_lifecycle_configuration" "l1" {
 }
 
 resource "aws_s3_bucket" "gifs" {
-  bucket = "image-wower-gifs"
+  bucket = "wow-emoji-gifs"
 }

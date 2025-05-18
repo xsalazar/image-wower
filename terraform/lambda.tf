@@ -1,6 +1,6 @@
 // API Handler
 resource "aws_lambda_function" "api" {
-  function_name = "image-wower-api"
+  function_name = "wow-emoji-api"
   filename      = "${path.module}/dummy-node-lambda-package/lambda.zip" // Simple hello world application
   handler       = "index.handler"
   role          = aws_iam_role.instance.arn
@@ -36,7 +36,7 @@ resource "aws_cloudwatch_log_group" "api" {
 
 // Image background remover
 resource "aws_lambda_function" "rembg" {
-  function_name = "image-wower-rembg"
+  function_name = "wow-emoji-rembg"
   image_uri     = "foo:bar"
   role          = aws_iam_role.instance.arn
   timeout       = 180   // seconds
@@ -71,7 +71,7 @@ resource "aws_cloudwatch_log_group" "rembg" {
 
 // Image combiner
 resource "aws_lambda_function" "combiner" {
-  function_name = "image-wower-combiner"
+  function_name = "wow-emoji-combiner"
   filename      = "${path.module}/dummy-node-lambda-package/lambda.zip" // Simple hello world application
   handler       = "index.handler"
   role          = aws_iam_role.instance.arn
