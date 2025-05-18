@@ -1,4 +1,4 @@
-# 🌈 Image Wower
+# 🌈 Wow Emoji Backend
 
 This repository holds both the Terraform infrastructure as well as the Javascript and Python applications that run inside AWS Lambda.
 
@@ -41,15 +41,29 @@ This repository leverages [VSCode's devcontainer](https://code.visualstudio.com/
 
 ### Application
 
-The application code for this repository is contained in the [`./app`](./app) directory.
+The application code for this repository is contained in the respective directories.
 
 To get started:
 
+#### api
+
 ```bash
-cd app/ && npm init
+cd src/api/ && npm init
 ```
 
-All application deployments are managed via GitHub Actions and the [`./.github/workflows/deploy_application.yml`](./.github/workflows/deploy_application.yml) workflow.
+#### combiner
+
+```bash
+cd src/combiner/ && npm init
+```
+
+#### rembg
+
+```bash
+cd src/rembg/ && pip install -r requirements.txt
+```
+
+All application deployments are managed via GitHub Actions in the [`./.github/workflows/`](./.github/workflows/) directory.
 
 ### Infrastructure
 
