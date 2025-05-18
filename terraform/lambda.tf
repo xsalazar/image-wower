@@ -37,7 +37,7 @@ resource "aws_cloudwatch_log_group" "api" {
 // Image background remover
 resource "aws_lambda_function" "rembg" {
   function_name = "wow-emoji-rembg"
-  image_uri     = "foo:bar"
+  image_uri     = "368081326042.dkr.ecr.us-west-2.amazonaws.com/image-wower-ecr-repo:61e9a2272ac8671a9da27267735c2f198c93f3f9"
   role          = aws_iam_role.instance.arn
   timeout       = 180   // seconds
   memory_size   = 10240 // MB
